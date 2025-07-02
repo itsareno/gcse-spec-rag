@@ -205,21 +205,6 @@
         .spec-header h1 { font-size: var(--font-size-xl); font-weight: 700; margin-right: auto; display: flex; align-items: center; gap: var(--space-3); flex-shrink: 1; min-width: 0; }
         .spec-header h1 span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* Pomodoro Timer */
-        .pomodoro-section { display: flex; align-items: center; gap: var(--space-2); background-color: var(--color-surface); border-radius: var(--radius-md); transition: background-color 0.5s ease; flex-shrink: 0; border: 1px solid var(--color-outline); }
-        .pomodoro-section.break-active { background-color: var(--rag-amber); border-color: var(--rag-amber); }
-        .pomodoro-section.break-active #pomoTimerBtn,
-        .pomodoro-section.break-active .pomo-secondary-btn { color: var(--color-accent-text); }
-        .pomodoro-section.break-active .pomo-secondary-btn:hover { background-color: rgba(0,0,0,0.15); }
-        #pomoTimerBtn { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: none; border: none; color: var(--color-text-primary); cursor: pointer; border-radius: var(--radius-md); }
-        #pomoTimerBtn:hover { background-color: var(--color-surface-hover); }
-        .timer-display { font-size: var(--font-size-lg); font-weight: 600; line-height: 1; transition: color 0.5s ease; }
-        #pomoTimerBtn .material-icons { font-size: var(--font-size-xl); }
-        .pomo-secondary-btn { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; border-radius: var(--radius-md); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .pomo-secondary-btn:hover { background-color: var(--color-surface-hover); color: var(--color-text-primary); }
-        .pomo-secondary-btn .material-icons { font-size: var(--font-size-lg); }
-        #pomoEditBtn { margin-right: var(--space-1); }
-        
         /* Buttons */
         .md-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--color-accent); background: var(--color-accent); color: var(--color-accent-text); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-speed) var(--easing); text-decoration: none; }
         .md-button:hover { transform: scale(1.03); }
@@ -325,9 +310,7 @@
             .spec-header {
                 display: grid;
                 grid-template-areas:
-                    "back title ."
-                    "filters filters filters"
-                    "pomo pomo pomo";
+                    "back title filters";
                 grid-template-columns: auto 1fr auto;
                 gap: var(--space-3);
                 padding: var(--space-3) var(--space-4);
@@ -351,12 +334,8 @@
             }
             .spec-header .filter-controls {
                 grid-area: filters;
-                justify-self: center;
+                justify-self: end;
                 margin-left: 0;
-            }
-            .spec-header .pomodoro-section {
-                grid-area: pomo;
-                justify-self: center;
             }
 
             .paper-header { padding: var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
@@ -416,14 +395,6 @@
                     <button class="filter-btn amber" data-filter="amber" title="Filter by Amber">A</button>
                     <button class="filter-btn green" data-filter="green" title="Filter by Green">G</button>
                 </div>
-                <div class="pomodoro-section">
-                    <button id="pomoTimerBtn" title="Start/Pause Timer">
-                        <span class="timer-display" id="pomoDisplay">25:00</span>
-                        <span class="material-icons" id="pomoIcon">play_arrow</span>
-                    </button>
-                    <button id="pomoResetBtn" title="Reset Timer" class="pomo-secondary-btn hidden"><span class="material-icons">replay</span></button>
-                    <button id="pomoEditBtn" title="Edit Timer Settings" class="pomo-secondary-btn"><span class="material-icons">edit</span></button>
-                </div>
             </div>
             <div id="specContent"></div>
         </div>
@@ -439,26 +410,6 @@
             <div class="modal-footer">
                 <button class="md-button text" id="cancelSettings">Cancel</button>
                 <button class="md-button" id="saveSettings">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="pomodoroSettingsModal" class="modal">
-         <div class="modal-content">
-            <div class="modal-header"><h2>Pomodoro Settings</h2></div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="focusTime">Focus Time (minutes)</label>
-                    <input type="number" id="focusTime" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="breakTime">Break Time (minutes)</label>
-                    <input type="number" id="breakTime" class="form-input">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="md-button text" id="cancelPomoSettings">Cancel</button>
-                <button class="md-button" id="savePomoSettings">Save</button>
             </div>
         </div>
     </div>
@@ -514,7 +465,6 @@
         let isResourceEditing = false;
         const views = {};
         const modals = {};
-        const pomodoro = {};
         let audioCtx; 
 
         // --- Core Application Logic ---
@@ -526,30 +476,14 @@
             document.querySelectorAll('.modal').forEach(modal => {
                 modals[modal.id] = modal;
             });
-
-            // Initialize Pomodoro timer
-            Object.assign(pomodoro, {
-                timerId: null, time: 25 * 60, isRunning: false, sessionType: 'focus',
-                settings: { focus: 25, break: 5 },
-                init() { this.display = document.getElementById('pomoDisplay'); this.icon = document.getElementById('pomoIcon'); this.resetBtn = document.getElementById('pomoResetBtn'); this.updateControls(); },
-                start() { this.isRunning = true; this.timerId = setInterval(() => { this.time--; this.updateDisplay(); if (this.time < 0) { this.stop(); beep(200, 880, 0.1); const wasFocusSession = this.sessionType === 'focus'; this.sessionType = wasFocusSession ? 'break' : 'focus'; this.reset(); if (wasFocusSession) { setTimeout(() => this.start(), 200); } } }, 1000); this.updateControls(); },
-                stop() { this.isRunning = false; clearInterval(this.timerId); this.updateControls(); },
-                toggle() { this.isRunning ? this.stop() : this.start(); },
-                reset(forceToFocus = false) { this.stop(); if (forceToFocus) this.sessionType = 'focus'; const pomoSectionEl = document.querySelector('.pomodoro-section'); if (pomoSectionEl) pomoSectionEl.classList.toggle('break-active', this.sessionType === 'break'); this.time = (this.sessionType === 'focus' ? this.settings.focus : this.settings.break) * 60; if(this.display) this.updateDisplay(); this.updateControls(); },
-                updateDisplay() { if(this.display){const m=String(Math.floor(this.time/60)).padStart(2,'0'),s=String(this.time%60).padStart(2,'0');this.display.textContent=`${m}:${s}`;}},
-                updateControls() { if (!this.icon) return; if (this.isRunning) { this.icon.textContent = 'pause'; this.resetBtn.classList.remove('hidden'); } else { this.icon.textContent = 'play_arrow'; const isPristineFocus = this.sessionType === 'focus' && this.time === this.settings.focus * 60; this.resetBtn.classList.toggle('hidden', isPristineFocus); } }
-            });
-            pomodoro.init();
             
             // Load data from localStorage
             try { 
-                const data = JSON.parse(localStorage.getItem('studyTrackerDataV2')); // Changed key to avoid conflicts with old structure
+                const data = JSON.parse(localStorage.getItem('studyTrackerDataV2'));
                 if(data) { 
                     selectedSubjects = data.selectedSubjects || []; 
                     paperResources = data.paperResources || {}; 
                     ragStatus = data.ragStatus || {};
-                    pomodoro.settings = data.pomodoroSettings || { focus: 25, break: 5 }; 
-                    pomodoro.reset(); 
                 }
             } catch (e) { console.error("Could not parse data, starting fresh.", e); }
             
@@ -560,7 +494,7 @@
         });
 
         // --- Data Persistence ---
-        function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, paperResources, pomodoroSettings: pomodoro.settings, ragStatus })); }
+        function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, paperResources, ragStatus })); }
 
         // --- Event Handling ---
         function addEventListeners() {
@@ -571,7 +505,7 @@
                 // Button clicks
                 const button = closest('button');
                 if (button) {
-                    const id = button.id; // FIX: Define the 'id' variable
+                    const id = button.id;
                     if (id === 'continueBtn') { if (selectedSubjects.length > 0) { saveData(); showView('dashboard'); } }
                     else if (id === 'editSubjectsBtn') { renderSettingsModal(); showModal('settingsModal'); }
                     else if (id === 'backToDashBtn') showView('dashboard');
@@ -580,13 +514,9 @@
                     else if (id === 'editResourcesBtn') toggleResourceEditMode();
                     else if (closest('.resource-delete-btn')) handleDeleteResource(closest('.resource-delete-btn').dataset.index);
                     else if (id === 'saveResourceBtn') handleSaveResource();
-                    else if (id === 'pomoTimerBtn') pomodoro.toggle();
-                    else if (id === 'pomoResetBtn') pomodoro.reset(true);
-                    else if (id === 'pomoEditBtn') { renderPomoSettingsModal(); showModal('pomodoroSettingsModal'); }
-                    else if (id === 'savePomoSettings') handleSavePomoSettings();
                     
                     // Modal close/save buttons
-                    if (id === 'cancelSettings' || id === 'closeResourcesModal' || id === 'cancelPomoSettings' || id === 'cancelEditResource') hideModal(closest('.modal').id);
+                    if (id === 'cancelSettings' || id === 'closeResourcesModal' || id === 'cancelEditResource') hideModal(closest('.modal').id);
                     if (id === 'saveSettings') handleSaveSettings();
                 }
                 
@@ -685,7 +615,7 @@
         }
 
         // --- View & Modal Management ---
-        function showView(viewName) { Object.values(views).forEach(v => v.classList.add('hidden')); if (views[viewName]) views[viewName].classList.remove('hidden'); if (viewName === 'onboarding') renderOnboardingContent(); if (viewName === 'dashboard') { renderDashboardContent(); startCountdown(); } if (viewName !== 'dashboard') stopCountdown(); if (viewName !== 'spec') pomodoro.reset(true); }
+        function showView(viewName) { Object.values(views).forEach(v => v.classList.add('hidden')); if (views[viewName]) views[viewName].classList.remove('hidden'); if (viewName === 'onboarding') renderOnboardingContent(); if (viewName === 'dashboard') { renderDashboardContent(); startCountdown(); } if (viewName !== 'dashboard') stopCountdown(); }
         function showModal(modalId) { if(modals[modalId]) modals[modalId].classList.add('visible'); }
         function hideModal(modalId) { if(modals[modalId]) modals[modalId].classList.remove('visible'); }
         
@@ -784,7 +714,6 @@
         function toggleSettingsSubject(card) { card.classList.toggle('selected'); updateSaveButtonState(); }
         function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
         function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
-        function handleSavePomoSettings() { const focusTime = parseInt(document.getElementById('focusTime').value, 10); const breakTime = parseInt(document.getElementById('breakTime').value, 10); if (!isNaN(focusTime) && focusTime > 0) pomodoro.settings.focus = focusTime; if (!isNaN(breakTime) && breakTime > 0) pomodoro.settings.break = breakTime; saveData(); pomodoro.reset(true); hideModal('pomodoroSettingsModal'); }
         function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
         
         // --- Resource Management ---
@@ -805,7 +734,6 @@
         function renderOnboardingContent() { const grid = document.getElementById('onboardingSubjectGrid'); if (!grid) return; grid.innerHTML = ''; Object.keys(subjectsData).forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; if (selectedSubjects.includes(subject)) card.classList.add('selected'); card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); updateContinueButton(); }
         function renderDashboardContent() { const grid = document.getElementById('dashboardSubjectGrid'); if (!grid) return; grid.innerHTML = ''; selectedSubjects.forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); }
         function renderSettingsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
-        function renderPomoSettingsModal() { document.getElementById('focusTime').value = pomodoro.settings.focus; document.getElementById('breakTime').value = pomodoro.settings.break; }
         function renderResourcesModal() { const { subject, paper } = currentContext; const paperKey = `${subject}-${paper}`; const resources = paperResources[paperKey] || []; const listEl = document.getElementById('resourcesList'); const editBtn = document.getElementById('editResourcesBtn'); const addBtn = document.getElementById('addNewResourceBtn'); document.getElementById('resourcesModalTitle').textContent = `Resources for ${paper}`; if (isResourceEditing) { editBtn.innerHTML = `<span class="material-icons">done</span>Done`; addBtn.style.display = 'none'; listEl.classList.add('editing'); } else { editBtn.innerHTML = `<span class="material-icons">edit</span>Edit`; addBtn.style.display = 'inline-flex'; listEl.classList.remove('editing'); } editBtn.disabled = resources.length === 0; let resourcesHTML = resources.length ? resources.map((res, i) => { const textClass = `text-${getContrastYIQ(res.color)}`; const safeUrl = /^(https?:\/\/)/i.test(res.url) ? res.url : 'https://' + res.url; return ` <div class="resource-item ${textClass}" data-index="${i}" style="background-color:${res.color};"> <span class="resource-title">${res.title}</span> <div class="resource-actions"> <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="resource-redirect-btn" title="Open Link"> <span class="material-icons">launch</span> </a> <button class="resource-delete-btn" data-index="${i}" title="Delete Resource"> <span class="material-icons">delete</span> </button> </div> </div>`.trim() }).join('') : '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-7) 0;">No resources added yet.</p>'; if (isResourceEditing && resources.length > 0) { resourcesHTML = `<p class="edit-mode-notice">✨ <b>Editing Mode</b> &mdash; Tap a resource to modify.</p>` + resourcesHTML; } listEl.innerHTML = resourcesHTML; }
         function renderEditResourceModal() { const { subject, paper, resourceIndex } = currentContext; const paperKey = `${subject}-${paper}`; const resource = resourceIndex !== null ? (paperResources[paperKey] || [])[resourceIndex] : null; document.getElementById('editResourceModalTitle').textContent = resource ? 'Edit Resource' : 'Add New Resource'; document.getElementById('resourceTitleInput').value = resource ? resource.title : ''; document.getElementById('resourceLinkInput').value = resource ? resource.url : ''; document.getElementById('deleteResourceBtn').style.display = resource ? 'inline-flex' : 'none'; const defaultColors = ['#FF453A', '#FF9F0A', '#30D158', '#0A84FF', '#5E5CE6', '#AF52DE']; const colorPicker = document.getElementById('resourceColorPicker'); let resourceColor = resource ? resource.color : '#5E5CE6'; let isDefaultColor = defaultColors.includes(resourceColor); colorPicker.innerHTML = ` ${defaultColors.map(c => `<div class="color-dot ${resourceColor === c ? 'selected' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('')} <input type="color" id="customColorPicker" class="${!isDefaultColor ? 'selected' : ''}" value="${isDefaultColor ? '#5E5CE6' : resourceColor}" title="Custom Color"> `; }
         
