@@ -317,39 +317,46 @@
             .onboarding-card { padding: var(--space-6) var(--space-4); }
             .onboarding-card h1 { font-size: var(--font-size-xl); }
 
-            .countdown-container { padding: var(--space-6) 0; }
             .countdown-timer { gap: var(--space-2); }
-            .countdown-item { padding: var(--space-3); min-width: 70px; }
+            .countdown-item { padding: var(--space-2); min-width: 65px; border-radius: var(--radius-md); }
             .countdown-item .value { font-size: var(--font-size-xl); }
+            .countdown-item .label { font-size: 10px; margin-top: var(--space-1); }
 
             .spec-header {
-                flex-direction: column;
-                align-items: stretch;
+                display: grid;
+                grid-template-areas:
+                    "back title ."
+                    "filters filters filters"
+                    "pomo pomo pomo";
+                grid-template-columns: auto 1fr auto;
                 gap: var(--space-3);
                 padding: var(--space-3) var(--space-4);
-                position: relative;
+                align-items: center;
             }
             .spec-header #backToDashBtn {
-                position: absolute;
-                top: var(--space-3);
-                left: var(--space-4);
-                z-index: 2;
+                grid-area: back;
+                width: 40px;
+                height: 40px;
+                padding: 0;
+            }
+            .spec-header #backToDashBtn .material-icons {
+                font-size: var(--font-size-lg);
             }
             .spec-header h1 {
+                grid-area: title;
                 font-size: var(--font-size-lg);
                 text-align: center;
                 margin: 0;
-                padding-top: 48px; /* Make space for back button */
-                order: 1;
+                padding: 0;
             }
             .spec-header .filter-controls {
-                order: 2;
+                grid-area: filters;
+                justify-self: center;
                 margin-left: 0;
-                align-self: center;
             }
             .spec-header .pomodoro-section {
-                order: 3;
-                align-self: center;
+                grid-area: pomo;
+                justify-self: center;
             }
 
             .paper-header { padding: var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
@@ -358,6 +365,7 @@
 
             .subtopic { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
             .subtopic-details { width: 100%; justify-content: space-between; }
+            .subtopic-review-info { font-size: 10px; }
         }
 
     </style>
@@ -804,3 +812,4 @@
     </script>
 </body>
 </html>
+
