@@ -3,1278 +3,751 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCSE Revision Tracker</title>
+    <title>GCSE Study Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        :root {
+            /* Foundational Palette */
+            --color-background: #0D0D0D;
+            --color-surface: #171717;
+            --color-surface-hover: #212121;
+            --color-outline: #2C2C2C;
+            --color-outline-hover: #444444;
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
+            --color-text-primary: #F5F5F5;
+            --color-text-secondary: #8A8A8A;
+            --color-text-tertiary: #5A5A5A;
+            
+            /* Accent Palette */
+            --color-accent: #FFFFFF;
+            --color-accent-text: #000000;
+            
+            /* RAG Palette */
+            --rag-red: #FF453A;
+            --rag-amber: #FF9F0A;
+            --rag-green: #30D158;
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+            /* Sizing & Spacing System (4px base) */
+            --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+            --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
 
-        /* Onboarding Styles */
+            /* Shape System */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 999px;
+
+            /* Typography System */
+            --font-size-xs: 12px; --font-size-sm: 14px; --font-size-md: 16px;
+            --font-size-lg: 20px; --font-size-xl: 24px; --font-size-xxl: 32px;
+
+            /* Motion System */
+            --easing: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-speed: 0.25s;
+        }
+        
+        @keyframes slideUpFadeIn { from { opacity: 0; transform: translateY(var(--space-2)); } to { opacity: 1; transform: translateY(0); } }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-background); 
+            color: var(--color-text-primary); 
+            line-height: 1.6; 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+        .hidden { display: none !important; }
+
+        /* Main Views */
+        .onboarding, .main-dashboard, .spec-view { animation: slideUpFadeIn 0.6s var(--easing) both; }
+
+        /* Modal Base Styles */
+        .modal { 
+            display: flex; 
+            position: fixed; 
+            inset: 0;
+            padding: var(--space-6); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(12px); 
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+        }
+        .modal.visible { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: var(--color-surface);
+            border-radius: var(--radius-xl); 
+            width: 100%; 
+            max-width: 560px;
+            border: 1px solid var(--color-outline);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            transform: scale(0.95);
+            transition: transform var(--transition-speed) var(--easing);
+        }
+        .modal.visible .modal-content { transform: scale(1); }
+        .modal-header {
+            padding: var(--space-6) var(--space-7);
+            border-bottom: 1px solid var(--color-outline);
+            flex-shrink: 0;
+        }
+        .modal-header h2 {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            text-align: center;
+        }
+        .modal-body {
+            padding: var(--space-6);
+            flex-grow: 1; 
+            overflow-y: auto;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--color-outline);
+            background-color: var(--color-surface);
+            border-bottom-left-radius: var(--radius-xl);
+            border-bottom-right-radius: var(--radius-xl);
+            flex-shrink: 0;
+        }
+        .modal-footer .md-button.text.destructive { margin-right: auto; }
+
+        /* Onboarding Screen */
         .onboarding {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .onboarding-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-xl); 
+            padding: var(--space-8); 
+            width: 100%; 
+            max-width: 720px;
+            border: 1px solid var(--color-outline);
             text-align: center;
         }
+        .onboarding-card h1 { font-size: var(--font-size-xxl); font-weight: 700; margin-bottom: var(--space-2); }
+        .onboarding-card p { color: var(--color-text-secondary); font-size: var(--font-size-md); margin-bottom: var(--space-7); max-width: 450px; margin-left: auto; margin-right: auto;}
+        .onboarding-card .subject-grid { margin-bottom: var(--space-7); }
+        
+        /* Countdown Timer */
+        .countdown-container { text-align: center; padding: var(--space-7) 0; }
+        .countdown-container h2 { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text-secondary); margin-bottom: var(--space-4); letter-spacing: 0.5px; text-transform: uppercase; }
+        .countdown-timer { display: flex; justify-content: center; gap: var(--space-4); }
+        .countdown-item { background: var(--color-surface); border: 1px solid var(--color-outline); padding: var(--space-4); border-radius: var(--radius-lg); min-width: 90px; }
+        .countdown-item .value { font-size: var(--font-size-xxl); font-weight: 700; line-height: 1.1; color: var(--color-accent); }
+        .countdown-item .label { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--space-2); }
 
-        .onboarding h1 {
-            color: #4a5568;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .onboarding p {
-            color: #718096;
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-        }
-
-        .subject-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .subject-card {
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .subject-card:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-        }
-
-        .subject-card.selected {
-            border-color: #667eea;
-            background: #edf2f7;
-        }
-
-        .subject-checkbox {
+        /* Subject Grid */
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4); }
+        .subject-card { 
+            border-radius: var(--radius-lg); 
+            padding: var(--space-5); 
+            cursor: pointer; 
+            transition: all var(--transition-speed) var(--easing); 
+            border: 1px solid var(--color-outline); 
+            background-color: var(--color-surface);
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-
-        .subject-checkbox input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            accent-color: #667eea;
-        }
-
-        .subject-checkbox label {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #4a5568;
-            cursor: pointer;
-        }
-
-        .exam-board-select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-        }
-
-        .exam-board-select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .continue-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .continue-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .continue-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Dashboard Styles */
-        .dashboard {
-            display: none;
-        }
-
-        .dashboard.active {
-            display: block;
-        }
-
-        .header {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header h1 {
-            color: #4a5568;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .settings-btn {
-            background: #e2e8f0;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #4a5568;
-        }
-
-        .settings-btn:hover {
-            background: #cbd5e0;
-        }
-
-        /* Tab Styles */
-        .tabs-container {
-            background: white;
-            border-radius: 15px 15px 0 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-
-        .tabs {
-            display: flex;
-            min-width: min-content;
-        }
-
-        .tab {
-            padding: 15px 25px;
-            background: #f7fafc;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #718096;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            border-radius: 10px 10px 0 0;
-            margin-right: 2px;
-        }
-
-        .tab:hover {
-            background: #edf2f7;
-            color: #4a5568;
-        }
-
-        .tab.active {
-            background: white;
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        /* Content Styles */
-        .content {
-            background: white;
-            border-radius: 0 0 15px 15px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .paper-section {
-            margin-bottom: 40px;
-        }
-
-        .paper-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .topic {
-            margin-bottom: 25px;
-            border-left: 4px solid #e2e8f0;
-            padding-left: 20px;
-        }
-
-        .topic-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 15px;
-        }
-
-        .subtopic {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
         }
-
-        .subtopic:last-child {
-            border-bottom: none;
+        .subject-card:hover { transform: translateY(-4px); border-color: var(--color-outline-hover); background-color: var(--color-surface-hover); }
+        .subject-card.selected { border-color: var(--color-accent); background-color: var(--color-surface); }
+        .subject-card h3 { font-size: var(--font-size-md); font-weight: 600; color: var(--color-text-primary); pointer-events: none; }
+        .subject-card.selected h3 { color: var(--color-accent); }
+        .exam-board-pill {
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            background-color: var(--color-background);
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-outline);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
+        #onboarding .subject-card, #settingsModal .subject-card { flex-direction: column; justify-content: center; text-align: center; gap: var(--space-3); }
 
-        .subtopic-text {
-            flex: 1;
-            color: #2d3748;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-
-        .rag-buttons {
+        /* Spec View Header */
+        .spec-header {
             display: flex;
-            gap: 8px;
-            margin-left: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-3) var(--space-6);
+            position: sticky;
+            top: 0;
+            background-color: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 101;
+            border-bottom: 1px solid var(--color-outline);
+            margin-bottom: var(--space-7);
         }
+        .spec-header h1 { font-size: var(--font-size-xl); font-weight: 700; margin-right: auto; display: flex; align-items: center; gap: var(--space-3); flex-shrink: 1; min-width: 0; }
+        .spec-header h1 span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* Pomodoro Timer */
+        .pomodoro-section { display: flex; align-items: center; gap: var(--space-2); background-color: var(--color-surface); border-radius: var(--radius-md); transition: background-color 0.5s ease; flex-shrink: 0; border: 1px solid var(--color-outline); }
+        .pomodoro-section.break-active { background-color: var(--rag-amber); border-color: var(--rag-amber); }
+        .pomodoro-section.break-active #pomoTimerBtn,
+        .pomodoro-section.break-active .pomo-secondary-btn { color: var(--color-accent-text); }
+        .pomodoro-section.break-active .pomo-secondary-btn:hover { background-color: rgba(0,0,0,0.15); }
+        #pomoTimerBtn { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: none; border: none; color: var(--color-text-primary); cursor: pointer; border-radius: var(--radius-md); }
+        #pomoTimerBtn:hover { background-color: var(--color-surface-hover); }
+        .timer-display { font-size: var(--font-size-lg); font-weight: 600; line-height: 1; transition: color 0.5s ease; }
+        #pomoTimerBtn .material-icons { font-size: var(--font-size-xl); }
+        .pomo-secondary-btn { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; border-radius: var(--radius-md); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .pomo-secondary-btn:hover { background-color: var(--color-surface-hover); color: var(--color-text-primary); }
+        .pomo-secondary-btn .material-icons { font-size: var(--font-size-lg); }
+        #pomoEditBtn { margin-right: var(--space-1); }
+        
+        /* Buttons */
+        .md-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--color-accent); background: var(--color-accent); color: var(--color-accent-text); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-speed) var(--easing); text-decoration: none; }
+        .md-button:hover { transform: scale(1.03); }
+        .md-button:active { transform: scale(0.98); }
+        .md-button:disabled { background: var(--color-surface); color: var(--color-text-tertiary); border-color: var(--color-outline); cursor: not-allowed; transform: none;}
+        .md-button .material-icons { font-size: var(--font-size-lg); }
+        .md-button.text { background: transparent; color: var(--color-text-primary); border-color: var(--color-outline); }
+        .md-button.text:hover { background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); }
+        .md-button.text.destructive { color: var(--rag-red); border-color: var(--color-outline); }
+        .md-button.text.destructive:hover { border-color: var(--rag-red); background-color: rgba(255, 69, 58, 0.1); }
+        .dashboard-footer { text-align: center; margin-top: var(--space-7); }
+        .dashboard-divider { display: flex; align-items: center; text-align: center; margin: var(--space-7) 0; color: var(--color-text-secondary); }
+        .dashboard-divider::before, .dashboard-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--color-outline); }
+        .dashboard-divider:not(:empty)::before { margin-right: 1em; }
+        .dashboard-divider:not(:empty)::after { margin-left: 1em; }
+        .dashboard-divider h2 { font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .rag-btn {
-            width: 35px;
-            height: 35px;
-            border: 2px solid;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            background: white;
-        }
+        /* Specification Content */
+        .paper-section { background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-xl); margin-bottom: var(--space-7); overflow: hidden; }
+        .paper-header { padding: var(--space-5) var(--space-6); font-size: var(--font-size-lg); font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+        .paper-header-title { display: flex; align-items: center; gap: var(--space-3); flex-grow: 1; }
+        .paper-completion-pill { font-size: var(--font-size-xs); font-weight: 600; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); background-color: var(--color-background); color: var(--color-text-secondary); border: 1px solid var(--color-outline); white-space: nowrap; }
+        .topic { border-top: 1px solid var(--color-outline); }
+        .topic-header { padding: var(--space-3) var(--space-6); font-weight: 600; font-size: var(--font-size-sm); color: var(--color-text-secondary); background-color: var(--color-background); }
+        .subtopic { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-outline); transition: background-color var(--transition-speed) ease; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+        .subtopic:hover { background-color: var(--color-surface-hover); }
+        .subtopic-title { font-size: var(--font-size-sm); flex-grow: 1; padding-right: var(--space-4); }
+        .subtopic-details { display: flex; align-items: center; gap: var(--space-5); flex-shrink: 0; }
+        .subtopic-review-info { font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right; white-space: nowrap; }
+        .paper-resources-btn { background-color: var(--color-surface); border: 1px solid var(--color-outline); color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); transition: all var(--transition-speed) ease; }
+        .paper-resources-btn:hover { color: var(--color-text-primary); background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); }
+        .paper-resources-btn.has-resources { color: var(--color-accent); border-color: var(--color-accent); }
+        .paper-resources-btn .material-icons { font-size: var(--font-size-lg); }
 
-        .rag-btn.red {
-            border-color: #f56565;
-            color: #f56565;
-        }
+        /* RAG System & Filter Styles */
+        .filter-controls { display: flex; gap: var(--space-2); background-color: var(--color-surface); padding: var(--space-1); border-radius: var(--radius-md); border: 1px solid var(--color-outline); margin-left: auto; }
+        .filter-btn { background: transparent; border: none; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 600; padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-speed) var(--easing); }
+        .filter-btn:hover { color: var(--color-text-primary); background-color: var(--color-surface-hover); }
+        .filter-btn.active { background-color: var(--color-accent); color: var(--color-accent-text); }
+        .filter-btn.red.active { background-color: var(--rag-red); }
+        .filter-btn.amber.active { background-color: var(--rag-amber); }
+        .filter-btn.green.active { background-color: var(--rag-green); }
+        .rag-selector { display: flex; gap: var(--space-2); flex-shrink: 0; }
+        .rag-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: all var(--transition-speed) var(--easing); opacity: 0.5; }
+        .rag-dot:hover { opacity: 1; transform: scale(1.1); }
+        .rag-dot.selected { opacity: 1; border-color: var(--color-accent); transform: scale(1.1); box-shadow: 0 0 12px -2px var(--color-accent); }
+        .rag-dot.red { background-color: var(--rag-red); }
+        .rag-dot.amber { background-color: var(--rag-amber); }
+        .rag-dot.green { background-color: var(--rag-green); }
+        .subtopic.filtered-out, .topic.filtered-out { display: none; }
 
-        .rag-btn.red.selected {
-            background: #f56565;
-            color: white;
-        }
+        /* Forms */
+        .form-group { margin-bottom: var(--space-4); }
+        .form-group label { display: block; font-size: var(--font-size-sm); font-weight: 500; margin-bottom: var(--space-2); }
+        .form-input { width: 100%; background: var(--color-background); border: 1px solid var(--color-outline); border-radius: var(--radius-md); padding: var(--space-3); color: var(--color-text-primary); font-size: var(--font-size-md); transition: border-color var(--transition-speed) ease; }
+        .form-input:focus { outline: none; border-color: var(--color-accent); }
+        .color-picker { display: flex; gap: var(--space-3); justify-content: flex-start; align-items: center; }
+        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid var(--color-outline); transition: all var(--transition-speed) ease; }
+        .color-dot.selected { border-color: var(--color-accent); transform: scale(1.1); }
+        input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 36px; height: 36px; background-color: transparent; border: none; cursor: pointer; border-radius: 50%; overflow: hidden; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 2px solid var(--color-outline); border-radius: 50%; }
+        input[type="color"].selected::-webkit-color-swatch { border-color: var(--color-accent); }
+        
+        /* Resource Item Styling */
+        #resourcesList.editing .resource-item { cursor: pointer; }
+        #resourcesList.editing .resource-item:hover { transform: scale(1.02); background-color: var(--color-surface-hover); }
+        .edit-mode-notice { text-align: center; padding: var(--space-2) var(--space-4); margin-bottom: var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-secondary); background-color: var(--color-background); border-radius: var(--radius-md); }
+        .resource-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-lg); transition: transform var(--transition-speed) var(--easing), background-color var(--transition-speed) ease; }
+        .resource-item + .resource-item { margin-top: var(--space-3); }
+        .resource-item.text-light { color: #FFFFFF; }
+        .resource-item.text-dark { color: #000000; }
+        .resource-title { flex-grow: 1; font-weight: 600; font-size: var(--font-size-md); }
+        .resource-actions { display: flex; align-items: center; }
+        .resource-actions a, .resource-actions button { background: rgba(255,255,255,0.1); border: none; cursor: pointer; text-decoration: none; color: inherit; border-radius: var(--radius-sm); width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; transition: all var(--transition-speed) ease; }
+        .resource-actions a:hover, .resource-actions button:hover { background: rgba(255,255,255,0.2); }
+        .resource-actions .resource-redirect-btn { display: inline-flex; }
+        .resource-actions .resource-delete-btn { display: none; background: rgba(255, 69, 58, 0.2); }
+        .resource-actions .resource-delete-btn:hover { background: rgba(255, 69, 58, 0.4); }
+        #resourcesList.editing .resource-actions .resource-redirect-btn { display: none; }
+        #resourcesList.editing .resource-actions .resource-delete-btn { display: inline-flex; }
 
-        .rag-btn.amber {
-            border-color: #ed8936;
-            color: #ed8936;
-        }
 
-        .rag-btn.amber.selected {
-            background: #ed8936;
-            color: white;
-        }
-
-        .rag-btn.green {
-            border-color: #48bb78;
-            color: #48bb78;
-        }
-
-        .rag-btn.green.selected {
-            background: #48bb78;
-            color: white;
-        }
-
-        .rag-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Progress Stats */
-        .progress-stats {
-            background: #f7fafc;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-number.red { color: #f56565; }
-        .stat-number.amber { color: #ed8936; }
-        .stat-number.green { color: #48bb78; }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #718096;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .onboarding {
-                padding: 30px 20px;
-                margin-top: 20px;
-            }
-
-            .onboarding h1 {
-                font-size: 2rem;
-            }
-
-            .subject-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .tabs {
-                overflow-x: auto;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .subtopic {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .rag-buttons {
-                margin-left: 0;
-            }
-
-            .progress-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .rag-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
-            .progress-stats {
-                grid-template-columns: 1fr;
-            }
+        @media (min-width: 768px) {
+            .spec-header { flex-wrap: nowrap; }
+            .spec-header h1 { font-size: var(--font-size-xxl); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Onboarding Screen -->
-        <div id="onboarding" class="onboarding">
-            <h1>Welcome to GCSE Revision Tracker</h1>
-            <p>Select your subjects and exam boards to get started with tracking your revision progress</p>
-            
-            <div class="subject-grid" id="subjectGrid">
-                <!-- Subject cards will be generated here -->
-            </div>
-            
-            <button class="continue-btn" id="continueBtn" onclick="completeOnboarding()">Save Selections & Continue</button>
+    <!-- Onboarding View: Initial setup for new users -->
+    <div id="onboarding" class="onboarding">
+        <div class="onboarding-card">
+            <h1>Welcome to Your Study Hub</h1>
+            <p>Select your subjects to build a personalized tracker and take control of your revision.</p>
+            <div class="subject-grid" id="onboardingSubjectGrid"></div>
+            <button class="md-button" id="continueBtn" disabled>
+                <span>Continue</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
         </div>
-
-        <!-- Dashboard -->
-        <div id="dashboard" class="dashboard">
-            <div class="header">
-                <h1>GCSE Revision Tracker</h1>
-                <button class="settings-btn" onclick="showOnboarding()">Edit Subjects</button>
+    </div>
+    
+    <!-- Main Dashboard: Shows selected subjects and countdown -->
+    <div id="main-dashboard" class="main-dashboard hidden">
+        <div class="container">
+            <div class="countdown-container">
+                <h2>Time until May 2026 GCSE Exams</h2>
+                <div class="countdown-timer" id="countdownTimer"></div>
             </div>
+            <div class="dashboard-divider"><h2>Your Subjects</h2></div>
+            <div class="subject-grid" id="dashboardSubjectGrid"></div>
+            <div class="dashboard-footer">
+                <button class="md-button text" id="editSubjectsBtn">
+                    <span class="material-icons">edit</span>
+                    <span>Edit Subjects</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-            <div class="tabs-container">
-                <div class="tabs" id="tabs">
-                    <!-- Tabs will be generated here -->
+    <!-- Specification View: Detailed breakdown of a subject -->
+    <div id="spec-view" class="spec-view hidden">
+        <div class="container">
+            <div class="spec-header">
+                <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <h1 id="specSubjectTitle"></h1>
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn red" data-filter="red" title="Filter by Red">R</button>
+                    <button class="filter-btn amber" data-filter="amber" title="Filter by Amber">A</button>
+                    <button class="filter-btn green" data-filter="green" title="Filter by Green">G</button>
+                </div>
+                <div class="pomodoro-section">
+                    <button id="pomoTimerBtn" title="Start/Pause Timer">
+                        <span class="timer-display" id="pomoDisplay">25:00</span>
+                        <span class="material-icons" id="pomoIcon">play_arrow</span>
+                    </button>
+                    <button id="pomoResetBtn" title="Reset Timer" class="pomo-secondary-btn hidden"><span class="material-icons">replay</span></button>
+                    <button id="pomoEditBtn" title="Edit Timer Settings" class="pomo-secondary-btn"><span class="material-icons">edit</span></button>
                 </div>
             </div>
+            <div id="specContent"></div>
+        </div>
+    </div>
 
-            <div class="content">
-                <div id="progressStats" class="progress-stats">
-                    <!-- Progress stats will be shown here -->
+    <!-- Modals for various settings and actions -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Edit Subjects</h2></div>
+            <div class="modal-body">
+                <div class="subject-grid" id="settingsSubjectGrid"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="md-button text" id="cancelSettings">Cancel</button>
+                <button class="md-button" id="saveSettings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pomodoroSettingsModal" class="modal">
+         <div class="modal-content">
+            <div class="modal-header"><h2>Pomodoro Settings</h2></div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="focusTime">Focus Time (minutes)</label>
+                    <input type="number" id="focusTime" class="form-input">
                 </div>
-                <div id="tabContent">
-                    <!-- Tab content will be shown here -->
+                <div class="form-group">
+                    <label for="breakTime">Break Time (minutes)</label>
+                    <input type="number" id="breakTime" class="form-input">
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="md-button text" id="cancelPomoSettings">Cancel</button>
+                <button class="md-button" id="savePomoSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resourcesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="resourcesModalTitle">Resources</h2></div>
+            <div class="modal-body" id="resourcesList"></div>
+            <div class="modal-footer">
+                <button class="md-button text" id="editResourcesBtn"><span class="material-icons">edit</span>Edit</button>
+                <button class="md-button" id="addNewResourceBtn"><span class="material-icons">add</span>New</button>
+                <button class="md-button text" id="closeResourcesModal" style="margin-left: auto;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editResourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="editResourceModalTitle">Add Resource</h2></div>
+            <div class="modal-body">
+                <div class="form-group"><label for="resourceTitleInput">Title</label><input type="text" id="resourceTitleInput" class="form-input" placeholder="e.g., My Notes, YouTube Video"></div>
+                <div class="form-group"><label for="resourceLinkInput">URL</label><input type="text" id="resourceLinkInput" class="form-input" placeholder="e.g., https://www.youtube.com/watch?v=..."></div>
+                <div class="form-group"><label>Color Tag</label><div class="color-picker" id="resourceColorPicker"></div></div>
+            </div>
+            <div class="modal-footer">
+                <button class="md-button text destructive" id="deleteResourceBtn">Delete</button>
+                <button class="md-button text" id="cancelEditResource">Cancel</button>
+                <button class="md-button" id="saveResourceBtn">Save</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Subject and exam board data with accurate specifications
-        const subjects = {
-            'Mathematics': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1 (Non-Calculator)': {
-                            'Number': [
-                                'Structure and calculation',
-                                'Fractions, decimals and percentages',
-                                'Indices and surds',
-                                'Standard form'
-                            ],
-                            'Algebra': [
-                                'Algebraic manipulation',
-                                'Graphs of linear functions',
-                                'Solving linear equations',
-                                'Solving linear inequalities'
-                            ],
-                            'Ratio, proportion and rates of change': [
-                                'Ratio',
-                                'Fractions as operators',
-                                'Percentage change',
-                                'Compound measures'
-                            ]
-                        },
-                        'Paper 2 (Calculator)': {
-                            'Geometry and measures': [
-                                'Properties of 2D shapes',
-                                'Properties of 3D shapes',
-                                'Transformations',
-                                'Constructions and loci',
-                                'Mensuration and calculation',
-                                'Pythagoras\' theorem',
-                                'Trigonometry'
-                            ],
-                            'Statistics': [
-                                'Statistical measures',
-                                'Tables and charts',
-                                'Probability'
-                            ]
-                        },
-                        'Paper 3 (Calculator)': {
-                            'Advanced Number': [
-                                'Prime factorisation',
-                                'HCF and LCM',
-                                'Recurring decimals',
-                                'Upper and lower bounds'
-                            ],
-                            'Advanced Algebra': [
-                                'Quadratic equations',
-                                'Simultaneous equations',
-                                'Inequalities on graphs',
-                                'Quadratic graphs',
-                                'Other graphs'
-                            ],
-                            'Advanced Geometry': [
-                                'Circle theorems',
-                                'Similarity and congruence',
-                                'Vectors'
-                            ]
-                        }
-                    },
-                    'Edexcel': {
-                        'Paper 1 (Non-Calculator)': {
-                            'Number': [
-                                'Integers and decimals',
-                                'Fractions',
-                                'Percentages',
-                                'Ratio and proportion',
-                                'Indices and standard form'
-                            ],
-                            'Algebra': [
-                                'Expressions and formulae',
-                                'Linear equations',
-                                'Sequences',
-                                'Straight line graphs'
-                            ]
-                        },
-                        'Paper 2 (Calculator)': {
-                            'Number and Algebra': [
-                                'Calculations',
-                                'Quadratic equations',
-                                'Inequalities',
-                                'Algebraic graphs'
-                            ],
-                            'Geometry and Measures': [
-                                'Angle properties',
-                                'Transformations',
-                                'Constructions',
-                                'Mensuration',
-                                'Pythagoras and trigonometry'
-                            ]
-                        },
-                        'Paper 3 (Calculator)': {
-                            'Statistics and Probability': [
-                                'Data collection',
-                                'Data processing and presentation',
-                                'Averages and spread',
-                                'Probability'
-                            ],
-                            'Advanced Topics': [
-                                'Functions',
-                                'Circle geometry',
-                                'Vectors'
-                            ]
-                        }
-                    }
-                }
-            },
-            'English Language': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1: Explorations in Creative Reading and Writing': {
-                            'Reading': [
-                                'Fiction text analysis',
-                                'Language techniques',
-                                'Structure analysis',
-                                'Writer\'s methods and effects'
-                            ],
-                            'Writing': [
-                                'Creative writing',
-                                'Descriptive writing',
-                                'Narrative writing',
-                                'Vocabulary and sentence structure'
-                            ]
-                        },
-                        'Paper 2: Writers\' Viewpoints and Perspectives': {
-                            'Reading': [
-                                'Non-fiction text analysis',
-                                'Comparing writers\' perspectives',
-                                'Language for effect',
-                                'Evaluating texts'
-                            ],
-                            'Writing': [
-                                'Transactional writing',
-                                'Persuasive writing',
-                                'Discursive writing',
-                                'Argument and counter-argument'
-                            ]
-                        }
-                    }
-                }
-            },
-            'English Literature': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1: Shakespeare and the 19th-century novel': {
-                            'Shakespeare': [
-                                'Character analysis',
-                                'Themes and ideas',
-                                'Language and structure',
-                                'Context and interpretation'
-                            ],
-                            '19th-century novel': [
-                                'Plot and narrative',
-                                'Character development',
-                                'Setting and atmosphere',
-                                'Social and historical context'
-                            ]
-                        },
-                        'Paper 2: Modern texts and poetry': {
-                            'Modern prose or drama': [
-                                'Modern themes',
-                                'Character relationships',
-                                'Dramatic techniques',
-                                'Social context'
-                            ],
-                            'Poetry anthology': [
-                                'Poetic techniques',
-                                'Comparison skills',
-                                'Themes across poems',
-                                'Historical and cultural context'
-                            ]
-                        }
-                    }
-                }
-            },
-            'Science (Combined)': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Biology Paper 1': {
-                            'Cell biology': [
-                                'Cell structure and organisation',
-                                'Cell division',
-                                'Transport in cells'
-                            ],
-                            'Organisation': [
-                                'Digestive system',
-                                'Circulatory system',
-                                'Respiratory system'
-                            ],
-                            'Infection and response': [
-                                'Communicable diseases',
-                                'Immune system',
-                                'Drug development'
-                            ]
-                        },
-                        'Biology Paper 2': {
-                            'Bioenergetics': [
-                                'Photosynthesis',
-                                'Respiration'
-                            ],
-                            'Homeostasis and response': [
-                                'Nervous system',
-                                'Endocrine system',
-                                'Water and nitrogen balance'
-                            ],
-                            'Inheritance and evolution': [
-                                'Reproduction',
-                                'Genetics',
-                                'Evolution'
-                            ],
-                            'Ecology': [
-                                'Ecosystems',
-                                'Material cycles',
-                                'Biodiversity'
-                            ]
-                        },
-                        'Chemistry Paper 1': {
-                            'Atomic structure and periodic table': [
-                                'Atoms and elements',
-                                'Compounds and mixtures',
-                                'Development of atomic model',
-                                'Electronic structure'
-                            ],
-                            'Bonding and structure': [
-                                'Chemical bonds',
-                                'Structure and properties of matter',
-                                'Bulk and surface properties'
-                            ],
-                            'Quantitative chemistry': [
-                                'Conservation of mass',
-                                'Relative formula mass',
-                                'Moles and equations'
-                            ]
-                        },
-                        'Chemistry Paper 2': {
-                            'Chemical changes': [
-                                'Reactivity of metals',
-                                'Reactions of acids',
-                                'Electrolysis'
-                            ],
-                            'Energy changes': [
-                                'Exothermic and endothermic reactions',
-                                'Reaction profiles'
-                            ],
-                            'Rate and extent of chemical change': [
-                                'Rate of reaction',
-                                'Reversible reactions and equilibrium'
-                            ],
-                            'Organic chemistry': [
-                                'Carbon compounds',
-                                'Fuels'
-                            ],
-                            'Chemical analysis': [
-                                'Pure substances',
-                                'Identification of gases'
-                            ]
-                        },
-                        'Physics Paper 1': {
-                            'Energy': [
-                                'Energy stores and transfers',
-                                'Conservation of energy',
-                                'Energy resources'
-                            ],
-                            'Electricity': [
-                                'Current and charge',
-                                'Potential difference and resistance',
-                                'Series and parallel circuits'
-                            ],
-                            'Particle model of matter': [
-                                'Density',
-                                'Internal energy',
-                                'Particle motion in gases'
-                            ]
-                        },
-                        'Physics Paper 2': {
-                            'Atomic structure': [
-                                'Atoms and isotopes',
-                                'Radioactive decay',
-                                'Nuclear fission and fusion'
-                            ],
-                            'Forces': [
-                                'Scalar and vector quantities',
-                                'Newton\'s laws',
-                                'Momentum'
-                            ],
-                            'Waves': [
-                                'Wave properties',
-                                'Electromagnetic spectrum',
-                                'Sound waves'
-                            ]
-                        }
-                    }
-                }
-            },
-            'Biology': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1': {
-                            'Cell Biology': [
-                                'Cell structure',
-                                'Cell organisation',
-                                'Infection and response'
-                            ],
-                            'Organisation': [
-                                'Principles of organisation',
-                                'Animal tissues, organs and organ systems',
-                                'Plant tissues, organs and systems'
-                            ]
-                        },
-                        'Paper 2': {
-                            'Bioenergetics': [
-                                'Photosynthesis',
-                                'Respiration'
-                            ],
-                            'Homeostasis and response': [
-                                'Homeostasis',
-                                'The human nervous system',
-                                'Hormonal coordination'
-                            ],
-                            'Inheritance, variation and evolution': [
-                                'Reproduction',
-                                'Genetics',
-                                'Evolution'
-                            ],
-                            'Ecology': [
-                                'Adaptations, interdependence and competition',
-                                'Organisation of an ecosystem',
-                                'Biodiversity and the effect of human interaction'
-                            ]
-                        }
-                    }
-                }
-            },
-            'Chemistry': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1': {
-                            'Atomic structure and the periodic table': [
-                                'A simple model of the atom',
-                                'Relative electrical charges',
-                                'Size and mass of atoms',
-                                'Relative atomic mass',
-                                'Electronic structure'
-                            ],
-                            'Bonding, structure, and the properties of matter': [
-                                'Chemical bonds',
-                                'How bonding and structure are related to properties',
-                                'Structure and bonding of carbon'
-                            ],
-                            'Quantitative chemistry': [
-                                'Chemical amounts',
-                                'Use of amount of substance in relation to masses of pure substances',
-                                'Yield and atom economy of chemical reactions'
-                            ],
-                            'Chemical changes': [
-                                'Reactivity of metals',
-                                'Reactions of acids',
-                                'Electrolysis'
-                            ],
-                            'Energy changes': [
-                                'Exothermic and endothermic reactions',
-                                'Reaction profiles',
-                                'Bond energy calculations'
-                            ]
-                        },
-                        'Paper 2': {
-                            'The rate and extent of chemical change': [
-                                'Rate of reaction',
-                                'Reversible reactions and dynamic equilibrium'
-                            ],
-                            'Organic chemistry': [
-                                'Carbon compounds as fuels and feedstock',
-                                'Reactions of alkenes and alcohols',
-                                'Synthetic and naturally occurring polymers'
-                            ],
-                            'Chemical analysis': [
-                                'Purity, formulations and chromatography',
-                                'Identification of common gases',
-                                'Identification of ions by chemical and spectroscopic means'
-                            ],
-                            'Chemistry of the atmosphere': [
-                                'The composition and evolution of the Earth\'s atmosphere',
-                                'Carbon dioxide and methane as greenhouse gases',
-                                'Common atmospheric pollutants and their sources'
-                            ],
-                            'Using resources': [
-                                'Using the Earth\'s resources and obtaining potable water',
-                                'Life cycle assessment and recycling',
-                                'Using materials'
-                            ]
-                        }
-                    }
-                }
-            },
-            'Physics': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1': {
-                            'Energy': [
-                                'Energy changes in a system',
-                                'Conservation and dissipation of energy',
-                                'National and global energy resources'
-                            ],
-                            'Electricity': [
-                                'Current, potential difference and resistance',
-                                'Series and parallel circuits',
-                                'Domestic uses and safety',
-                                'Energy transfers'
-                            ],
-                            'Particle model of matter': [
-                                'Changes of state and the particle model',
-                                'Internal energy and energy transfers',
-                                'Particle model and pressure'
-                            ],
-                            'Atomic structure': [
-                                'Atoms and isotopes',
-                                'Atoms and nuclear radiation',
-                                'Hazards and uses of radioactive emissions',
-                                'Nuclear fission and fusion'
-                            ]
-                        },
-                        'Paper 2': {
-                            'Forces': [
-                                'Forces and their interactions',
-                                'Work done and energy transfer',
-                                'Forces and elasticity',
-                                'Moments, levers and gears',
-                                'Pressure and pressure differences in fluids',
-                                'Forces and motion',
-                                'Momentum'
-                            ],
-                            'Waves': [
-                                'Transverse and longitudinal waves',
-                                'Properties of waves',
-                                'Reflection of waves',
-                                'Sound waves',
-                                'Electromagnetic waves',
-                                'Lenses'
-                            ],
-                            'Magnetism and electromagnetism': [
-                                'Permanent and induced magnetism',
-                                'Magnetic fields',
-                                'The motor effect',
-                                'Induced potential difference',
-                                'Loudspeakers and microphones'
-                            ]
-                        }
-                    }
-                }
-            },
-            'History': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1: Understanding the Modern World': {
-                            'Period Study': [
-                                'America, 1920-1973: Opportunity and inequality',
-                                'Germany, 1890-1945: Democracy and dictatorship',
-                                'Russia, 1894-1945: Tsardom and communism'
-                            ],
-                            'Wider World Depth Study': [
-                                'Conflict and tension in Asia, 1950-1975',
-                                'Conflict and tension between East and West, 1945-1972',
-                                'Conflict and tension in the Gulf and Afghanistan, 1990-2009'
-                            ]
-                        },
-                        'Paper 2: Shaping the Nation': {
-                            'Thematic Study': [
-                                'Britain: Health and the people: c1000 to the present day',
-                                'Britain: Power and the people: c1170 to the present day',
-                                'Britain: Migration, empires and the people: c790 to the present day'
-                            ],
-                            'British Depth Study': [
-                                'Norman England, c1066-c1100',
-                                'Medieval England: the reign of Edward I, 1272-1307',
-                                'Elizabethan England, c1568-1603'
-                            ]
-                        }
-                    }
-                }
-            },
-            'Geography': {
-                examBoards: ['AQA', 'Edexcel', 'OCR'],
-                specifications: {
-                    'AQA': {
-                        'Paper 1: Living with the physical environment': {
-                            'The challenge of natural hazards': [
-                                'Natural hazards',
-                                'Tectonic hazards',
-                                'Weather hazards',
-                                'Climate change'
-                            ],
-                            'The living world': [
-                                'Ecosystems',
-                                'Tropical rainforests',
-                                'Hot deserts',
-                                'Cold environments'
-                            ],
-                            'Physical landscapes in the UK': [
-                                'UK physical landscapes',
-                                'Coastal landscapes',
-                                'River landscapes',
-                                'Glacial landscapes'
-                            ]
-                        },
-                        'Paper 2: Challenges in the human environment': {
-                            'Urban issues and challenges': [
-                                'The challenge of urbanisation',
-                                'Urban change in the UK',
-                                'Sustainable urban development'
-                            ],
-                            'The changing economic world': [
-                                'The development gap',
-                                'Reducing the development gap',
-                                'Economic change in the UK'
-                            ],
-                            'The challenge of resource management': [
-                                'Resource management',
-                                'Food security',
-                                'Water security',
-                                'Energy security'
-                            ]
-                        },
-                        'Paper 3: Geographical applications': {
-                            'Issue evaluation': [
-                                'Fieldwork',
-                                'Problem solving',
-                                'Decision making'
-                            ],
-                            'Fieldwork': [
-                                'Physical geography fieldwork',
-                                'Human geography fieldwork'
-                            ]
-                        }
-                    }
-                }
-            }
+        // Data containing all subject specifications
+        const subjectsData = {
+            'Mathematics':{specifications:{'Edexcel':{'Paper 1 (Non-Calculator)':{'Number':['Calculations with integers and decimals','Fractions and percentages','Indices and standard form','Surds'],'Algebra':['Simplifying expressions','Linear equations and inequalities','Sequences','Straight line graphs']},'Paper 2 (Calculator)':{'Number and Finance':['Percentage calculations','Compound interest','Estimation and approximation','Problem solving with money'],'Geometry and Measures':['Perimeter, area and volume','Transformations','Constructions and loci','Pythagoras and trigonometry']},'Paper 3 (Calculator)':{'Statistics and Probability':['Collecting and representing data','Averages and measures of spread','Probability','Tree diagrams and conditional probability'],'Advanced Topics':['Quadratic equations and graphs','Simultaneous equations','Circle theorems','Vectors']}}}},
+            'English Language':{specifications:{'AQA':{'Paper 1: Explorations in Creative Reading and Writing':{'Reading':['Identify and interpret explicit and implicit information','Explain and analyse how writers use language','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing':['Creative writing for a specified audience, purpose and form','Demonstrate effective use of vocabulary','Use a range of sentence structures','Use paragraphs effectively']},'Paper 2: Writers\' Viewpoints and Perspectives':{'Reading (19th and 21st Century Non-fiction)':['Identify and interpret explicit and implicit information','Analyse how writers use language and structure','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing (Transactional)':['Write to express viewpoints','Write for a specified audience, purpose and form','Organise information and ideas','Use vocabulary and sentence structures appropriately']}}}},
+            'English Literature':{specifications:{'AQA':{'Paper 1: Shakespeare and the 19th-century novel':{'Shakespeare (Macbeth)':['Plot and character analysis','Themes (e.g., ambition, guilt)','Context (historical, cultural)','Language, structure, and form'],'19th-Century Novel (A Christmas Carol)':['Plot and characterisation','Themes (e.g., poverty, redemption)','Setting and narrative techniques','Social and historical context']},'Paper 2: Modern texts and poetry':{'Modern Prose/Drama (An Inspector Calls)':['Character motivations and roles','Dramatic techniques and structure','Social, political, and historical context','Themes (e.g., social responsibility)'],'Poetry (Power and Conflict Cluster)':['Analysis of 15 set poems','Comparing poems on themes','Analysing language and structure','Understanding context']}}}},
+            'Biology':{specifications:{'AQA':{'Paper 1':{'1. Cell biology':['Cell structure','Cell division','Transport in cells'],'2. Organisation':['Principles of organisation','Animal tissues, organs and systems','Plant tissues, organs and systems'],'3. Infection and response':['Communicable diseases','Viral, bacterial, protist and fungal diseases','Human defence systems','Vaccination','Antibiotics and painkillers'],'4. Bioenergetics':['Photosynthesis','Respiration']},'Paper 2':{'5. Homeostasis and response':['The human nervous system','The endocrine system','Hormonal coordination in humans'],'6. Inheritance, variation and evolution':['Reproduction','Variation and evolution','The development of genetics','Cloning'],'7. Ecology':['Adaptations, interdependence and competition','Organisation of an ecosystem','Biodiversity and human interaction','Trophic levels and food production']}}}},
+            'Chemistry':{specifications:{'AQA':{'Paper 1':{'1. Atomic structure and the periodic table':['Atoms, elements and compounds','The periodic table','Properties of transition metals'],'2. Bonding, structure, and the properties of matter':['Chemical bonds','Properties of different structures','Structure and bonding of carbon'],'3. Quantitative chemistry':['Chemical measurements','Use of amount of substance in equations','Yield and atom economy'],'4. Chemical changes':['Reactivity of metals','Reactions of acids','Electrolysis'],'5. Energy changes':['Exothermic and endothermic reactions','Chemical cells and fuel cells']},'Paper 2':{'6. The rate and extent of chemical change':['Rate of reaction','Reversible reactions and dynamic equilibrium'],'7. Organic chemistry':['Carbon compounds as fuels and feedstock','Reactions of alkenes and alcohols','Synthetic and naturally occurring polymers'],'8. Chemical analysis':['Purity, formulations and chromatography','Identification of common gases and ions'],'9. Chemistry of the atmosphere':['The composition and evolution of the Earth’s atmosphere','Common atmospheric pollutants and their sources'],'10. Using resources':['Using the Earth’s resources and sustainable development','Potable water','Life cycle assessment and recycling']}}}},
+            'Physics':{specifications:{'AQA':{'Paper 1':{'1. Energy':['Energy changes in a system','Conservation and dissipation of energy','National and global energy resources'],'2. Electricity':['Current, potential difference and resistance','Series and parallel circuits','Domestic uses and safety','Static electricity'],'3. Particle model of matter':['Changes of state and the particle model','Internal energy and energy transfers','Particle model and pressure'],'4. Atomic structure':['Atoms and isotopes','Atoms and nuclear radiation','Nuclear fission and fusion']},'Paper 2':{'5. Forces':['Forces and their interactions','Work done and energy transfer','Forces and elasticity','Pressure and pressure differences in fluids','Moments, levers and gears'],'6. Waves':['Wave properties','Electromagnetic waves','Black body radiation'],'7. Magnetism and electromagnetism':['Permanent and induced magnetism','The motor effect','Induced potential, transformers and the National Grid'],'8. Space physics':['Solar system; stability of orbital motions; satellites','Red-shift and the Big Bang theory']}}}},
+            'Geography':{specifications:{'AQA':{'Paper 1: Living with the physical environment':{'1. The challenge of natural hazards':['Natural hazards','Tectonic hazards','Weather hazards','Climate change'],'2. The living world':['Ecosystems','Tropical rainforests','Hot deserts','Cold environments'],'3. Physical landscapes in the UK':['UK physical landscapes','Coastal landscapes in the UK','River landscapes in the UK','Glacial landscapes in the UK']},'Paper 2: Challenges in the human environment':{'4. Urban issues and challenges':['The urban world','Urban change in the UK','Urban sustainability'],'5. The changing economic world':['The development gap','Newly emerging economies (NEEs)','The changing UK economy'],'6. The challenge of resource management':['Resource management','Food management','Water management','Energy management']}}}},
+            'Computer Science':{specifications:{'OCR':{'Component 01: Computer systems':{'1.1 Systems Architecture':['The purpose of the CPU','Von Neumann architecture','Common CPU components and their function','The fetch-execute cycle'],'1.2 Memory & Storage':['The difference between RAM and ROM','The purpose of virtual memory','Flash memory','Types of storage: optical, magnetic, solid state'],'1.3 Computer Networks, Connections & Protocols':['Types of networks: LAN and WAN','Factors that affect network performance','The Internet and the DNS','Network topologies, hardware and protocols'],'1.4 Network Security':['Threats to computer systems and networks','Identifying and preventing vulnerabilities'],'1.5 System Software':['Operating systems functions','User interface types','Memory management and multitasking','Utility system software'],'1.6 Ethical, Legal, Cultural & Environmental Impacts':['Impacts of digital technology on society','Legislation (e.g., Data Protection Act, Computer Misuse Act)','Open source vs proprietary software']},'Component 02: Computational thinking, algorithms and programming':{'2.1 Algorithms':['Computational thinking','Standard searching and sorting algorithms','Producing algorithms using pseudocode and flowcharts'],'2.2 Programming Fundamentals':['Variables, constants, operators, inputs, outputs, assignment','Programming constructs (sequence, selection, iteration)','String manipulation','Data types and arrays','Subroutines (functions and procedures)'],'2.3 Producing Robust Programs':['Defensive design','Maintainability','Testing','Syntax and logic errors'],'2.4 Boolean Logic':['Simple logic diagrams (AND, OR, NOT)','Truth tables','Combining Boolean operators'],'2.5 Programming Languages & IDEs':['High-level and low-level languages','Translators (compilers and interpreters)','Integrated Development Environment (IDE) tools']}}}}
         };
 
-        // State management
+        // Application State
         let selectedSubjects = [];
-        let currentActiveTab = '';
+        let paperResources = {};
         let ragStatus = {};
+        let currentRagFilter = 'all';
+        let countdownInterval;
+        let currentContext = { subject: null, paper: null, resourceIndex: null };
+        let isResourceEditing = false;
+        const views = {};
+        const modals = {};
+        const pomodoro = {};
+        let audioCtx; 
 
-        // Initialize app
-        function init() {
-            loadSavedData();
-            generateSubjectGrid();
+        // --- Core Application Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cache view elements
+            Object.assign(views, {onboarding: document.getElementById('onboarding'),dashboard: document.getElementById('main-dashboard'),spec: document.getElementById('spec-view')});
             
-            if (selectedSubjects.length > 0) {
-                showDashboard();
-            } else {
-                showOnboarding();
-            }
-        }
+            // Cache modal elements
+            document.querySelectorAll('.modal').forEach(modal => {
+                modals[modal.id] = modal;
+            });
 
-        function loadSavedData() {
-            const saved = JSON.parse(localStorage.getItem('gcseTracker') || '{}');
-            selectedSubjects = saved.selectedSubjects || [];
-            ragStatus = saved.ragStatus || {};
-        }
+            // Initialize Pomodoro timer
+            Object.assign(pomodoro, {
+                timerId: null, time: 25 * 60, isRunning: false, sessionType: 'focus',
+                settings: { focus: 25, break: 5 },
+                init() { this.display = document.getElementById('pomoDisplay'); this.icon = document.getElementById('pomoIcon'); this.resetBtn = document.getElementById('pomoResetBtn'); this.updateControls(); },
+                start() { this.isRunning = true; this.timerId = setInterval(() => { this.time--; this.updateDisplay(); if (this.time < 0) { this.stop(); beep(200, 880, 0.1); const wasFocusSession = this.sessionType === 'focus'; this.sessionType = wasFocusSession ? 'break' : 'focus'; this.reset(); if (wasFocusSession) { setTimeout(() => this.start(), 200); } } }, 1000); this.updateControls(); },
+                stop() { this.isRunning = false; clearInterval(this.timerId); this.updateControls(); },
+                toggle() { this.isRunning ? this.stop() : this.start(); },
+                reset(forceToFocus = false) { this.stop(); if (forceToFocus) this.sessionType = 'focus'; const pomoSectionEl = document.querySelector('.pomodoro-section'); if (pomoSectionEl) pomoSectionEl.classList.toggle('break-active', this.sessionType === 'break'); this.time = (this.sessionType === 'focus' ? this.settings.focus : this.settings.break) * 60; if(this.display) this.updateDisplay(); this.updateControls(); },
+                updateDisplay() { if(this.display){const m=String(Math.floor(this.time/60)).padStart(2,'0'),s=String(this.time%60).padStart(2,'0');this.display.textContent=`${m}:${s}`;}},
+                updateControls() { if (!this.icon) return; if (this.isRunning) { this.icon.textContent = 'pause'; this.resetBtn.classList.remove('hidden'); } else { this.icon.textContent = 'play_arrow'; const isPristineFocus = this.sessionType === 'focus' && this.time === this.settings.focus * 60; this.resetBtn.classList.toggle('hidden', isPristineFocus); } }
+            });
+            pomodoro.init();
+            
+            // Load data from localStorage
+            try { 
+                const data = JSON.parse(localStorage.getItem('studyTrackerDataV2')); // Changed key to avoid conflicts with old structure
+                if(data) { 
+                    selectedSubjects = data.selectedSubjects || []; 
+                    paperResources = data.paperResources || {}; 
+                    ragStatus = data.ragStatus || {};
+                    pomodoro.settings = data.pomodoroSettings || { focus: 25, break: 5 }; 
+                    pomodoro.reset(); 
+                }
+            } catch (e) { console.error("Could not parse data, starting fresh.", e); }
+            
+            // Initial view logic
+            if (selectedSubjects.length > 0) { showView('dashboard'); } 
+            else { showView('onboarding'); }
+            addEventListeners();
+        });
 
-        function saveData() {
-            localStorage.setItem('gcseTracker', JSON.stringify({
-                selectedSubjects: selectedSubjects,
-                ragStatus: ragStatus
-            }));
-        }
+        // --- Data Persistence ---
+        function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, paperResources, pomodoroSettings: pomodoro.settings, ragStatus })); }
 
-        function generateSubjectGrid() {
-            const grid = document.getElementById('subjectGrid');
-            grid.innerHTML = '';
-
-            Object.keys(subjects).forEach(subject => {
-                const card = document.createElement('div');
-                card.className = 'subject-card';
+        // --- Event Handling ---
+        function addEventListeners() {
+            document.body.addEventListener('click', e => {
+                const target = e.target;
+                const closest = (selector) => target.closest(selector);
                 
-                const isSelected = selectedSubjects.some(s => s.subject === subject);
-                if (isSelected) card.classList.add('selected');
-
-                const selectedBoard = selectedSubjects.find(s => s.subject === subject)?.examBoard || subjects[subject].examBoards[0];
-
-                card.innerHTML = `
-                    <div class="subject-checkbox">
-                        <input type="checkbox" id="${subject}" ${isSelected ? 'checked' : ''} 
-                               onchange="toggleSubject('${subject}')">
-                        <label for="${subject}">${subject}</label>
-                    </div>
-                    <select class="exam-board-select" id="board-${subject}" 
-                            onchange="updateExamBoard('${subject}', this.value)">
-                        ${subjects[subject].examBoards.map(board => 
-                            `<option value="${board}" ${board === selectedBoard ? 'selected' : ''}>${board}</option>`
-                        ).join('')}
-                    </select>
-                `;
-
-                grid.appendChild(card);
-            });
-
-            updateContinueButton();
-        }
-
-        function toggleSubject(subject) {
-            const checkbox = document.getElementById(subject);
-            const card = checkbox.closest('.subject-card');
-            const boardSelect = document.getElementById(`board-${subject}`);
-
-            if (checkbox.checked) {
-                card.classList.add('selected');
-                const examBoard = boardSelect.value;
-                if (!selectedSubjects.some(s => s.subject === subject)) {
-                    selectedSubjects.push({ subject, examBoard });
+                // Button clicks
+                const button = closest('button');
+                if (button) {
+                    const id = button.id; // FIX: Define the 'id' variable
+                    if (id === 'continueBtn') { if (selectedSubjects.length > 0) { saveData(); showView('dashboard'); } }
+                    else if (id === 'editSubjectsBtn') { renderSettingsModal(); showModal('settingsModal'); }
+                    else if (id === 'backToDashBtn') showView('dashboard');
+                    else if (closest('.paper-resources-btn')) showResourcesModal(closest('.paper-resources-btn').dataset.subject, closest('.paper-resources-btn').dataset.paper);
+                    else if (id === 'addNewResourceBtn') showEditResourceModal();
+                    else if (id === 'editResourcesBtn') toggleResourceEditMode();
+                    else if (closest('.resource-delete-btn')) handleDeleteResource(closest('.resource-delete-btn').dataset.index);
+                    else if (id === 'saveResourceBtn') handleSaveResource();
+                    else if (id === 'pomoTimerBtn') pomodoro.toggle();
+                    else if (id === 'pomoResetBtn') pomodoro.reset(true);
+                    else if (id === 'pomoEditBtn') { renderPomoSettingsModal(); showModal('pomodoroSettingsModal'); }
+                    else if (id === 'savePomoSettings') handleSavePomoSettings();
+                    
+                    // Modal close/save buttons
+                    if (id === 'cancelSettings' || id === 'closeResourcesModal' || id === 'cancelPomoSettings' || id === 'cancelEditResource') hideModal(closest('.modal').id);
+                    if (id === 'saveSettings') handleSaveSettings();
                 }
-            } else {
-                card.classList.remove('selected');
-                selectedSubjects = selectedSubjects.filter(s => s.subject !== subject);
-                // Remove RAG status for this subject
-                delete ragStatus[subject];
-            }
+                
+                // Subject card clicks
+                const subjectCard = closest('.subject-card');
+                if (subjectCard) {
+                    if(document.getElementById('main-dashboard').contains(subjectCard)) showSpecView(subjectCard.dataset.subject);
+                    if(document.getElementById('onboarding').contains(subjectCard)) toggleOnboardingSubject(subjectCard);
+                    if(document.getElementById('settingsModal').contains(subjectCard)) toggleSettingsSubject(subjectCard);
+                }
 
-            updateContinueButton();
-            saveData();
-        }
+                // Resource item clicks (in edit mode)
+                const resourceItem = closest('.resource-item');
+                if (resourceItem && isResourceEditing) { if (!target.closest('.resource-delete-btn')) { showEditResourceModal(resourceItem.dataset.index); } }
 
-        function updateExamBoard(subject, examBoard) {
-            const subjectIndex = selectedSubjects.findIndex(s => s.subject === subject);
-            if (subjectIndex !== -1) {
-                selectedSubjects[subjectIndex].examBoard = examBoard;
-                // Clear RAG status when exam board changes
-                delete ragStatus[subject];
-                saveData();
-            }
-        }
+                // Color picker clicks
+                const colorDot = closest('.color-dot');
+                if (colorDot && closest('#editResourceModal')) { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); colorDot.classList.add('selected'); }
 
-        function updateContinueButton() {
-            const btn = document.getElementById('continueBtn');
-            btn.disabled = selectedSubjects.length === 0;
-        }
+                // RAG dot clicks
+                const ragDot = closest('.rag-dot');
+                if (ragDot) { handleRagSelection(ragDot); }
 
-        function completeOnboarding() {
-            if (selectedSubjects.length === 0) return;
-            
-            saveData();
-            showDashboard();
-        }
-
-        function showOnboarding() {
-            document.getElementById('onboarding').style.display = 'block';
-            document.getElementById('dashboard').classList.remove('active');
-            generateSubjectGrid();
-        }
-
-        function showDashboard() {
-            document.getElementById('onboarding').style.display = 'none';
-            document.getElementById('dashboard').classList.add('active');
-            generateTabs();
-            if (selectedSubjects.length > 0) {
-                showTab(selectedSubjects[0].subject);
-            }
-        }
-
-        function generateTabs() {
-            const tabsContainer = document.getElementById('tabs');
-            tabsContainer.innerHTML = '';
-
-            selectedSubjects.forEach(({ subject }) => {
-                const tab = document.createElement('button');
-                tab.className = 'tab';
-                tab.textContent = subject;
-                tab.onclick = () => showTab(subject);
-                tabsContainer.appendChild(tab);
-            });
-        }
-
-        function showTab(subject) {
-            currentActiveTab = subject;
-            
-            // Update active tab styling
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.textContent === subject) {
-                    tab.classList.add('active');
+                // Filter button clicks
+                const filterBtn = closest('.filter-btn');
+                if (filterBtn) {
+                    currentRagFilter = filterBtn.dataset.filter;
+                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    filterBtn.classList.add('active');
+                    applyRagFilter();
                 }
             });
-
-            // Show content for this subject
-            const subjectData = selectedSubjects.find(s => s.subject === subject);
-            if (subjectData) {
-                displaySubjectContent(subjectData);
-                updateProgressStats(subject);
-            }
+            
+            document.body.addEventListener('input', e => { if (e.target.id === 'customColorPicker') { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); e.target.classList.add('selected'); } });
         }
 
-        function displaySubjectContent({ subject, examBoard }) {
-            const content = document.getElementById('tabContent');
-            const spec = subjects[subject]?.specifications?.[examBoard];
+        // --- RAG System & Filtering Functions ---
+        function handleRagSelection(dotElement) {
+            const selector = dotElement.parentElement;
+            const subtopicKey = selector.dataset.subtopicKey;
+            const newStatus = dotElement.dataset.status;
 
-            if (!spec) {
-                content.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #718096;">
-                        <h3>Specification not available</h3>
-                        <p>The specification for ${subject} (${examBoard}) is not yet available.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '';
-
-            Object.entries(spec).forEach(([paper, topics]) => {
-                html += `<div class="paper-section">
-                    <div class="paper-header">${paper}</div>`;
-
-                Object.entries(topics).forEach(([topic, subtopics]) => {
-                    html += `<div class="topic">
-                        <div class="topic-title">${topic}</div>`;
-
-                    subtopics.forEach(subtopic => {
-                        const subtopicKey = `${subject}-${examBoard}-${paper}-${topic}-${subtopic}`;
-                        const currentRag = ragStatus[subtopicKey] || '';
-
-                        html += `
-                            <div class="subtopic">
-                                <div class="subtopic-text">${subtopic}</div>
-                                <div class="rag-buttons">
-                                    <button class="rag-btn red ${currentRag === 'red' ? 'selected' : ''}" 
-                                            onclick="setRagStatus('${subtopicKey}', 'red')">R</button>
-                                    <button class="rag-btn amber ${currentRag === 'amber' ? 'selected' : ''}" 
-                                            onclick="setRagStatus('${subtopicKey}', 'amber')">A</button>
-                                    <button class="rag-btn green ${currentRag === 'green' ? 'selected' : ''}" 
-                                            onclick="setRagStatus('${subtopicKey}', 'green')">G</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    html += '</div>';
-                });
-
-                html += '</div>';
-            });
-
-            content.innerHTML = html;
-        }
-
-        function setRagStatus(subtopicKey, status) {
-            // Toggle off if same status is clicked
-            if (ragStatus[subtopicKey] === status) {
+            if (dotElement.classList.contains('selected')) {
                 delete ragStatus[subtopicKey];
             } else {
-                ragStatus[subtopicKey] = status;
+                ragStatus[subtopicKey] = { status: newStatus, timestamp: new Date().toISOString() };
             }
-
             saveData();
-            
-            // Update button styling
-            const buttons = document.querySelectorAll(`[onclick*="${subtopicKey}"]`);
-            buttons.forEach(btn => btn.classList.remove('selected'));
-            
-            if (ragStatus[subtopicKey]) {
-                const selectedBtn = document.querySelector(`[onclick*="${subtopicKey}"][onclick*="${ragStatus[subtopicKey]}"]`);
-                if (selectedBtn) selectedBtn.classList.add('selected');
-            }
+            beep(50, 600, 0.05);
 
-            updateProgressStats(currentActiveTab);
+            const subtopicEl = dotElement.closest('.subtopic');
+            const newSubtopicEl = createSubtopicElement( subtopicEl.dataset.subject, subtopicEl.dataset.examBoard, subtopicEl.dataset.paper, subtopicEl.dataset.topic, subtopicEl.dataset.subtopic );
+            subtopicEl.parentNode.replaceChild(newSubtopicEl, subtopicEl);
+            
+            updatePaperCompletionPercentages();
+            applyRagFilter();
         }
 
-        function updateProgressStats(subject) {
-            const statsContainer = document.getElementById('progressStats');
-            const subjectData = selectedSubjects.find(s => s.subject === subject);
-            
-            if (!subjectData) return;
+        function applyRagFilter() {
+            const topics = document.querySelectorAll('#specContent .topic');
+            topics.forEach(topic => {
+                let hasVisibleSubtopic = false;
+                const subtopics = topic.querySelectorAll('.subtopic');
+                subtopics.forEach(subtopic => {
+                    const subtopicKey = subtopic.querySelector('.rag-selector').dataset.subtopicKey;
+                    const entry = ragStatus[subtopicKey];
+                    const status = entry ? entry.status : null;
 
-            const spec = subjects[subject]?.specifications?.[subjectData.examBoard];
-            if (!spec) return;
-
-            let totalSubtopics = 0;
-            let redCount = 0;
-            let amberCount = 0;
-            let greenCount = 0;
-
-            // Count all subtopics and their RAG status
-            Object.entries(spec).forEach(([paper, topics]) => {
-                Object.entries(topics).forEach(([topic, subtopics]) => {
-                    subtopics.forEach(subtopic => {
-                        totalSubtopics++;
-                        const subtopicKey = `${subject}-${subjectData.examBoard}-${paper}-${topic}-${subtopic}`;
-                        const status = ragStatus[subtopicKey];
-                        
-                        if (status === 'red') redCount++;
-                        else if (status === 'amber') amberCount++;
-                        else if (status === 'green') greenCount++;
-                    });
+                    if (currentRagFilter === 'all' || status === currentRagFilter) {
+                        subtopic.classList.remove('filtered-out');
+                        hasVisibleSubtopic = true;
+                    } else {
+                        subtopic.classList.add('filtered-out');
+                    }
                 });
+                topic.classList.toggle('filtered-out', !hasVisibleSubtopic);
             });
+        }
+        
+        function updatePaperCompletionPercentages() {
+            document.querySelectorAll('.paper-section').forEach(paperSection => {
+                const subtopics = paperSection.querySelectorAll('.subtopic');
+                const totalSubtopics = subtopics.length;
+                if (totalSubtopics === 0) return;
 
-            const notAssessed = totalSubtopics - redCount - amberCount - greenCount;
+                let ratedCount = 0;
+                subtopics.forEach(subtopic => {
+                    const subtopicKey = subtopic.querySelector('.rag-selector').dataset.subtopicKey;
+                    if (ragStatus[subtopicKey]) ratedCount++;
+                });
 
-            statsContainer.innerHTML = `
-                <div class="stat">
-                    <div class="stat-number red">${redCount}</div>
-                    <div class="stat-label">Need Help</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number amber">${amberCount}</div>
-                    <div class="stat-label">Getting There</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number green">${greenCount}</div>
-                    <div class="stat-label">Confident</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" style="color: #a0aec0;">${notAssessed}</div>
-                    <div class="stat-label">Not Assessed</div>
-                </div>
-            `;
+                const percentage = totalSubtopics > 0 ? Math.round((ratedCount / totalSubtopics) * 100) : 0;
+                const pill = paperSection.querySelector('.paper-completion-pill');
+                if(pill) pill.textContent = `${percentage}% Reviewed`;
+            });
         }
 
-        // Initialize the app when page loads
-        init();
+        // --- View & Modal Management ---
+        function showView(viewName) { Object.values(views).forEach(v => v.classList.add('hidden')); if (views[viewName]) views[viewName].classList.remove('hidden'); if (viewName === 'onboarding') renderOnboardingContent(); if (viewName === 'dashboard') { renderDashboardContent(); startCountdown(); } if (viewName !== 'dashboard') stopCountdown(); if (viewName !== 'spec') pomodoro.reset(true); }
+        function showModal(modalId) { if(modals[modalId]) modals[modalId].classList.add('visible'); }
+        function hideModal(modalId) { if(modals[modalId]) modals[modalId].classList.remove('visible'); }
+        
+        function showSpecView(subject) { 
+            currentContext.subject = subject; 
+            const subjectInfo = subjectsData[subject];
+            const examBoard = Object.keys(subjectInfo.specifications)[0];
+            document.getElementById('specSubjectTitle').innerHTML = `<span>${subject}</span><span class="exam-board-pill">${examBoard}</span>`; 
+            
+            currentRagFilter = 'all';
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === 'all'));
+
+            renderSpecContent(subject); 
+            showView('spec'); 
+        }
+
+        // --- UI Rendering ---
+        function renderSpecContent(subject) { 
+            const contentEl = document.getElementById('specContent'); 
+            const subjectInfo = subjectsData[subject]; 
+            if (!subjectInfo) { contentEl.innerHTML = '<p>Subject data not available.</p>'; return; } 
+            const examBoard = Object.keys(subjectInfo.specifications)[0]; 
+            const specification = subjectInfo.specifications[examBoard]; 
+            if (!specification) { contentEl.innerHTML = '<p>Specification data not available.</p>'; return; } 
+            
+            contentEl.innerHTML = ''; 
+            Object.keys(specification).forEach((paper, i) => { 
+                const paperEl = document.createElement('div'); 
+                paperEl.className = 'paper-section';
+                paperEl.style.animationDelay = `${i * 100}ms`;
+                paperEl.dataset.paper = paper;
+                paperEl.dataset.subject = subject;
+                paperEl.appendChild(createPaperHeaderElement(subject, paper)); 
+                Object.keys(specification[paper]).forEach(topic => { 
+                    const topicEl = document.createElement('div'); 
+                    topicEl.className = 'topic'; 
+                    topicEl.innerHTML = `<div class="topic-header">${topic}</div>`; 
+                    specification[paper][topic].forEach(subtopic => topicEl.appendChild(createSubtopicElement(subject, examBoard, paper, topic, subtopic))); 
+                    paperEl.appendChild(topicEl); 
+                }); 
+                contentEl.appendChild(paperEl); 
+            }); 
+            updatePaperCompletionPercentages();
+            applyRagFilter();
+        }
+        
+        function createSubtopicElement(subject, examBoard, paper, topic, subtopic) { 
+            const subtopicEl = document.createElement('div'); 
+            subtopicEl.className = 'subtopic'; 
+            subtopicEl.dataset.subject = subject;
+            subtopicEl.dataset.examBoard = examBoard;
+            subtopicEl.dataset.paper = paper;
+            subtopicEl.dataset.topic = topic;
+            subtopicEl.dataset.subtopic = subtopic;
+
+            const subtopicKey = `${subject}-${paper}-${topic}-${subtopic}`.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
+            const ragEntry = ragStatus[subtopicKey];
+            const currentStatus = ragEntry ? ragEntry.status : null;
+            const timestamp = ragEntry ? ragEntry.timestamp : null;
+
+            const formattedDate = timestamp 
+                ? new Date(timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '')
+                : '';
+
+            subtopicEl.innerHTML = `
+                <div class="subtopic-title">${subtopic}</div>
+                <div class="subtopic-details">
+                    <div class="subtopic-review-info">${formattedDate}</div>
+                    <div class="rag-selector" data-subtopic-key="${subtopicKey}">
+                        <div class="rag-dot red ${currentStatus === 'red' ? 'selected' : ''}" data-status="red" title="Not Confident"></div>
+                        <div class="rag-dot amber ${currentStatus === 'amber' ? 'selected' : ''}" data-status="amber" title="Partially Confident"></div>
+                        <div class="rag-dot green ${currentStatus === 'green' ? 'selected' : ''}" data-status="green" title="Fully Confident"></div>
+                    </div>
+                </div>`;
+            return subtopicEl; 
+        }
+
+        function createPaperHeaderElement(subject, paper) { 
+            const hasRes = (paperResources[`${subject}-${paper}`] || []).length > 0; 
+            const paperEl = document.createElement('div'); 
+            paperEl.className = 'paper-header'; 
+            paperEl.dataset.paperKey = `${subject}-${paper}`; 
+            paperEl.innerHTML = `
+                <div class="paper-header-title">
+                    <span>${paper}</span>
+                    <span class="paper-completion-pill">0% Reviewed</span>
+                </div>
+                <button class="paper-resources-btn ${hasRes ? 'has-resources' : ''}" data-subject="${subject}" data-paper="${paper}" title="View Resources">
+                    <span class="material-icons">menu_book</span>
+                </button>`; 
+            return paperEl; 
+        }
+
+        // --- Onboarding & Settings ---
+        function toggleOnboardingSubject(card) { const subject = card.dataset.subject; const isSelected = card.classList.toggle('selected'); if (isSelected) { if (!selectedSubjects.includes(subject)) selectedSubjects.push(subject); } else { selectedSubjects = selectedSubjects.filter(s => s !== subject); } updateContinueButton(); }
+        function toggleSettingsSubject(card) { card.classList.toggle('selected'); updateSaveButtonState(); }
+        function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
+        function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
+        function handleSavePomoSettings() { const focusTime = parseInt(document.getElementById('focusTime').value, 10); const breakTime = parseInt(document.getElementById('breakTime').value, 10); if (!isNaN(focusTime) && focusTime > 0) pomodoro.settings.focus = focusTime; if (!isNaN(breakTime) && breakTime > 0) pomodoro.settings.break = breakTime; saveData(); pomodoro.reset(true); hideModal('pomodoroSettingsModal'); }
+        function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
+        
+        // --- Resource Management ---
+        function showResourcesModal(subject, paper) { Object.assign(currentContext, { subject, paper }); isResourceEditing = false; renderResourcesModal(); showModal('resourcesModal'); }
+        function toggleResourceEditMode() { isResourceEditing = !isResourceEditing; renderResourcesModal(); }
+        function showEditResourceModal(index = null) { currentContext.resourceIndex = index === null ? null : Number(index); renderEditResourceModal(); showModal('editResourceModal'); }
+        function handleSaveResource() { const title = document.getElementById('resourceTitleInput').value.trim(); let url = document.getElementById('resourceLinkInput').value.trim(); const selectedColorEl = document.querySelector('#resourceColorPicker .selected'); if (!selectedColorEl) { alert('Please select a color.'); return; } const color = selectedColorEl.dataset.color || selectedColorEl.value; if (!title || !url) { alert('Please provide both a title and a URL.'); return; } if (!/^(https?:\/\/)/i.test(url)) { url = 'https://' + url; } const { subject, paper, resourceIndex } = currentContext; const paperKey = `${subject}-${paper}`; if (!paperResources[paperKey]) paperResources[paperKey] = []; const newResource = { title, url, color }; if (resourceIndex !== null) { paperResources[paperKey][resourceIndex] = newResource; } else { paperResources[paperKey].push(newResource); } saveData(); rerenderPaperHeader(subject, paper); renderResourcesModal(); hideModal('editResourceModal'); }
+        function handleDeleteResource(index) { if (confirm('Are you sure you want to delete this resource?')) { const { subject, paper } = currentContext; paperResources[`${subject}-${paper}`].splice(index, 1); saveData(); rerenderPaperHeader(subject, paper); renderResourcesModal(); } }
+        
+        // --- Utility & Helper Functions ---
+        function beep(duration = 150, frequency = 440, volume = 0.1) { try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); g.gain.value = volume; o.frequency.value = frequency; o.type = 'sine'; o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime + duration / 1000); } catch (e) { console.error("Web Audio API is not supported."); } }
+        function startCountdown() { const el=document.getElementById('countdownTimer');const d=new Date('2026-05-14T09:00:00');function t(){const o=d-new Date;if(o<=0){el.innerHTML="<h2>Exams Started!</h2>";stopCountdown();return}const e=Math.floor(o/864e5),n=Math.floor(o%864e5/36e5),a=Math.floor(o%36e5/6e4),i=Math.floor(o%6e4/1e3);el.innerHTML=`<div class="countdown-item"><span class="value">${e}</span><span class="label">Days</span></div><div class="countdown-item"><span class="value">${n}</span><span class="label">Hours</span></div><div class="countdown-item"><span class="value">${a}</span><span class="label">Minutes</span></div><div class="countdown-item"><span class="value">${i}</span><span class="label">Seconds</span></div>`}stopCountdown();t();countdownInterval=setInterval(t,1e3)}
+        function stopCountdown() { clearInterval(countdownInterval); }
+        function rerenderPaperHeader(subject, paper) { const el = document.querySelector(`.paper-header[data-paper-key="${subject}-${paper}"]`); if(el) { const newHeader = createPaperHeaderElement(subject, paper); el.parentNode.replaceChild(newHeader, el); updatePaperCompletionPercentages(); } }
+        function getContrastYIQ(hexcolor){ hexcolor = hexcolor.replace("#", ""); const r = parseInt(hexcolor.substr(0,2),16), g = parseInt(hexcolor.substr(2,2),16), b = parseInt(hexcolor.substr(4,2),16); const yiq = ((r*299)+(g*587)+(b*114))/1000; return (yiq >= 128) ? 'dark' : 'light'; }
+        
+        // --- Initial Render Functions ---
+        function renderOnboardingContent() { const grid = document.getElementById('onboardingSubjectGrid'); if (!grid) return; grid.innerHTML = ''; Object.keys(subjectsData).forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; if (selectedSubjects.includes(subject)) card.classList.add('selected'); card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); updateContinueButton(); }
+        function renderDashboardContent() { const grid = document.getElementById('dashboardSubjectGrid'); if (!grid) return; grid.innerHTML = ''; selectedSubjects.forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); }
+        function renderSettingsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
+        function renderPomoSettingsModal() { document.getElementById('focusTime').value = pomodoro.settings.focus; document.getElementById('breakTime').value = pomodoro.settings.break; }
+        function renderResourcesModal() { const { subject, paper } = currentContext; const paperKey = `${subject}-${paper}`; const resources = paperResources[paperKey] || []; const listEl = document.getElementById('resourcesList'); const editBtn = document.getElementById('editResourcesBtn'); const addBtn = document.getElementById('addNewResourceBtn'); document.getElementById('resourcesModalTitle').textContent = `Resources for ${paper}`; if (isResourceEditing) { editBtn.innerHTML = `<span class="material-icons">done</span>Done`; addBtn.style.display = 'none'; listEl.classList.add('editing'); } else { editBtn.innerHTML = `<span class="material-icons">edit</span>Edit`; addBtn.style.display = 'inline-flex'; listEl.classList.remove('editing'); } editBtn.disabled = resources.length === 0; let resourcesHTML = resources.length ? resources.map((res, i) => { const textClass = `text-${getContrastYIQ(res.color)}`; const safeUrl = /^(https?:\/\/)/i.test(res.url) ? res.url : 'https://' + res.url; return ` <div class="resource-item ${textClass}" data-index="${i}" style="background-color:${res.color};"> <span class="resource-title">${res.title}</span> <div class="resource-actions"> <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="resource-redirect-btn" title="Open Link"> <span class="material-icons">launch</span> </a> <button class="resource-delete-btn" data-index="${i}" title="Delete Resource"> <span class="material-icons">delete</span> </button> </div> </div>`.trim() }).join('') : '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-7) 0;">No resources added yet.</p>'; if (isResourceEditing && resources.length > 0) { resourcesHTML = `<p class="edit-mode-notice">✨ <b>Editing Mode</b> &mdash; Tap a resource to modify.</p>` + resourcesHTML; } listEl.innerHTML = resourcesHTML; }
+        function renderEditResourceModal() { const { subject, paper, resourceIndex } = currentContext; const paperKey = `${subject}-${paper}`; const resource = resourceIndex !== null ? (paperResources[paperKey] || [])[resourceIndex] : null; document.getElementById('editResourceModalTitle').textContent = resource ? 'Edit Resource' : 'Add New Resource'; document.getElementById('resourceTitleInput').value = resource ? resource.title : ''; document.getElementById('resourceLinkInput').value = resource ? resource.url : ''; document.getElementById('deleteResourceBtn').style.display = resource ? 'inline-flex' : 'none'; const defaultColors = ['#FF453A', '#FF9F0A', '#30D158', '#0A84FF', '#5E5CE6', '#AF52DE']; const colorPicker = document.getElementById('resourceColorPicker'); let resourceColor = resource ? resource.color : '#5E5CE6'; let isDefaultColor = defaultColors.includes(resourceColor); colorPicker.innerHTML = ` ${defaultColors.map(c => `<div class="color-dot ${resourceColor === c ? 'selected' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('')} <input type="color" id="customColorPicker" class="${!isDefaultColor ? 'selected' : ''}" value="${isDefaultColor ? '#5E5CE6' : resourceColor}" title="Custom Color"> `; }
+        
     </script>
 </body>
 </html>
