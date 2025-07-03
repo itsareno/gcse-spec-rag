@@ -140,13 +140,13 @@
             margin-bottom: var(--space-7); padding: var(--space-4) var(--space-6);
             display: flex;
             align-items: center;
-            flex-wrap: wrap; /* Allow wrapping on smaller desktop screens */
-            justify-content: space-between; /* Key for desktop layout */
+            flex-wrap: wrap; 
+            justify-content: space-between;
         }
-        .spec-header-main { display: flex; align-items: center; gap: var(--space-4); }
+        .spec-header-main { display: flex; align-items: center; gap: var(--space-4); flex-shrink: 1; min-width: 0; }
         .spec-header h1 {
             font-weight: 700; display: flex; align-items: center;
-            gap: var(--space-3); flex-shrink: 1; min-width: 0;
+            gap: var(--space-3);
             font-size: clamp(1.25rem, 3.5vw, var(--font-size-xl));
         }
         
@@ -183,6 +183,14 @@
         .dashboard-divider:not(:empty)::before { margin-right: 1em; }
         .dashboard-divider:not(:empty)::after { margin-left: 1em; }
         .dashboard-divider h2 { font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* No Subjects Message */
+        #noSubjectsMessage {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--color-text-secondary);
+        }
+        #noSubjectsMessage p { margin-bottom: var(--space-4); }
 
         /* Specification Content */
         .paper-section { background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-xl); margin-bottom: var(--space-7); overflow: hidden; }
@@ -264,6 +272,10 @@
             }
 
             .container { padding: 0 var(--space-4); }
+            #main-dashboard .container {
+                padding-bottom: 30px; /* Space at the bottom for mobile dashboard */
+            }
+
             .onboarding-card { padding: var(--space-7) var(--space-4); }
             .onboarding-card h1 { font-size: var(--font-size-xl); }
             .countdown-container { padding: var(--space-6) 0; }
@@ -278,6 +290,7 @@
                 align-items: center;
                 gap: var(--space-3);
                 padding: var(--space-3) var(--space-4);
+                justify-content: flex-start;
             }
             .spec-header-main {
                 position: relative;
@@ -297,7 +310,6 @@
             .spec-summary-bar { 
                 justify-content: center; 
                 flex-wrap: wrap; 
-                margin-left: 0; 
             }
             
             .paper-section { border-radius: var(--radius-lg); }
@@ -333,8 +345,15 @@
                 <h2>Time until May 2026 GCSE Exams</h2>
                 <div class="countdown-timer" id="countdownTimer"></div>
             </div>
-            <div class="dashboard-divider"><h2>Your Subjects</h2></div>
+            <div class="dashboard-divider" id="dashboardDivider"><h2>Your Subjects</h2></div>
             <div class="subject-grid" id="dashboardSubjectGrid"></div>
+            <div id="noSubjectsMessage" class="hidden">
+                <p>You haven't added any subjects yet.</p>
+                <button class="md-button" id="addSubjectsFromDashBtn">
+                    <span class="material-icons">add</span>
+                    <span>Add Subjects</span>
+                </button>
+            </div>
             <div class="dashboard-footer">
                 <button class="md-button text" id="editSubjectsBtn">
                     <span class="material-icons">edit</span>
@@ -411,8 +430,11 @@
                 }
             } catch (e) { console.error("Could not parse data, starting fresh.", e); }
             
-            if (selectedSubjects.length > 0) { showView('dashboard'); } 
-            else { showView('onboarding'); }
+            if (localStorage.getItem('studyTrackerDataV2')) { 
+                showView('dashboard'); 
+            } else { 
+                showView('onboarding'); 
+            }
             addEventListeners();
         });
 
@@ -429,7 +451,7 @@
                 if (button) {
                     const id = button.id;
                     if (id === 'continueBtn') { if (selectedSubjects.length > 0) { saveData(); showView('dashboard'); } }
-                    else if (id === 'editSubjectsBtn') { renderSettingsModal(); showModal('settingsModal'); }
+                    else if (id === 'editSubjectsBtn' || id === 'addSubjectsFromDashBtn') { renderSettingsModal(); showModal('settingsModal'); }
                     else if (id === 'backToDashBtn') showView('dashboard');
                     
                     if (id === 'cancelSettings') hideModal(closest('.modal').id);
@@ -702,14 +724,46 @@
         function toggleOnboardingSubject(card) { const subject = card.dataset.subject; const isSelected = card.classList.toggle('selected'); if (isSelected) { if (!selectedSubjects.includes(subject)) selectedSubjects.push(subject); } else { selectedSubjects = selectedSubjects.filter(s => s !== subject); } updateContinueButton(); }
         function toggleSettingsSubject(card) { card.classList.toggle('selected'); updateSaveButtonState(); }
         function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
-        function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
+        
+        function handleSaveSettings() { 
+            selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); 
+            saveData(); 
+            hideModal('settingsModal'); 
+            showView('dashboard'); 
+        }
         function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
                         
         function startCountdown() { const el=document.getElementById('countdownTimer');const d=new Date('2026-05-14T09:00:00');function t(){const o=d-new Date;if(o<=0){el.innerHTML="<h2>Exams Started!</h2>";stopCountdown();return}const e=Math.floor(o/864e5),n=Math.floor(o%864e5/36e5),a=Math.floor(o%36e5/6e4),i=Math.floor(o%6e4/1e3);el.innerHTML=`<div class="countdown-item"><span class="value">${e}</span><span class="label">Days</span></div><div class="countdown-item"><span class="value">${n}</span><span class="label">Hours</span></div><div class="countdown-item"><span class="value">${a}</span><span class="label">Minutes</span></div><div class="countdown-item"><span class="value">${i}</span><span class="label">Seconds</span></div>`}stopCountdown();t();countdownInterval=setInterval(t,1e3)}
         function stopCountdown() { clearInterval(countdownInterval); }
         
         function renderOnboardingContent() { const grid = document.getElementById('onboardingSubjectGrid'); if (!grid) return; grid.innerHTML = ''; Object.keys(subjectsData).forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; if (selectedSubjects.includes(subject)) card.classList.add('selected'); card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); updateContinueButton(); }
-        function renderDashboardContent() { const grid = document.getElementById('dashboardSubjectGrid'); if (!grid) return; grid.innerHTML = ''; selectedSubjects.forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); }
+        function renderDashboardContent() { 
+            const grid = document.getElementById('dashboardSubjectGrid');
+            const noSubjectsMsg = document.getElementById('noSubjectsMessage');
+            const divider = document.getElementById('dashboardDivider');
+            
+            if (selectedSubjects.length === 0) {
+                grid.innerHTML = '';
+                grid.classList.add('hidden');
+                divider.classList.add('hidden');
+                noSubjectsMsg.classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                divider.classList.remove('hidden');
+                noSubjectsMsg.classList.add('hidden');
+                grid.innerHTML = '';
+                selectedSubjects.forEach((subject, index) => { 
+                    const subjectInfo = subjectsData[subject]; 
+                    const examBoard = Object.keys(subjectInfo.specifications)[0]; 
+                    const card = document.createElement('div'); 
+                    card.className = 'subject-card'; 
+                    card.dataset.subject = subject; 
+                    card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; 
+                    card.style.animationDelay = `${index * 50}ms`; 
+                    grid.appendChild(card); 
+                }); 
+            }
+        }
         function renderSettingsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
 
     </script>
