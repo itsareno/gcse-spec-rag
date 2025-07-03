@@ -202,6 +202,7 @@
             justify-content: space-between;
             padding-top: var(--space-4);
             padding-bottom: var(--space-4);
+            gap: var(--space-4);
         }
         #spec-view > .container {
              margin-top: var(--space-7);
@@ -210,7 +211,7 @@
         html[data-theme="light"] .spec-header { background-color: rgba(245, 245, 245, 0.8); }
         html[data-theme="ufc"] .spec-header { background-color: rgba(10, 10, 10, 0.8); }
 
-        .spec-header-main { display: flex; align-items: center; gap: var(--space-4); flex-shrink: 1; min-width: 0; }
+        .spec-header-main { display: flex; align-items: center; gap: var(--space-4); flex-grow: 1; min-width: 0; }
         .spec-header h1 {
             font-weight: 700; display: flex; align-items: center;
             gap: var(--space-3);
@@ -218,7 +219,7 @@
         }
         
         /* Summary Bar Filter */
-        .spec-summary-bar { display: flex; gap: var(--space-2); }
+        .spec-summary-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
         .summary-item {
             display: flex; align-items: center; gap: var(--space-2);
             background-color: var(--color-surface); border: 1px solid var(--color-outline);
@@ -235,6 +236,40 @@
         .summary-item .dot.red { background-color: var(--rag-red); }
         .summary-item .dot.amber { background-color: var(--rag-amber); }
         .summary-item .dot.green { background-color: var(--rag-green); }
+
+        /* Science Tabs for Combined Science */
+        .science-tabs {
+            display: flex;
+            gap: var(--space-3);
+            width: 100%;
+        }
+        .science-tab {
+            flex: 1; /* Make tabs take up equal space */
+            padding: var(--space-3) var(--space-2);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-outline);
+            background-color: var(--color-surface);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            text-align: center;
+        }
+        .science-tab:hover {
+            background-color: var(--color-surface-hover);
+            border-color: var(--color-outline-hover);
+            color: var(--color-text-primary);
+        }
+        .science-tab.active {
+            background-color: var(--color-accent);
+            color: var(--color-accent-text);
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 8px -2px rgba(0,0,0,0.1);
+        }
+        html[data-theme="ufc"] .science-tab.active {
+            box-shadow: 0 0 12px -2px var(--color-accent);
+        }
 
         /* Buttons */
         .md-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--color-accent); background: var(--color-accent); color: var(--color-accent-text); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-speed) var(--easing); text-decoration: none; }
@@ -375,8 +410,25 @@
 
         /* Desktop-only styles */
         @media (min-width: 769px) {
-            .subject-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-            #onboarding .subject-card, #editSubjectsModal .subject-card { flex-direction: column; justify-content: center; text-align: center; gap: var(--space-3); }
+            .subject-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+            /* Center header content for combined science on desktop */
+            #spec-view.is-combined-science .spec-header .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #spec-view.is-combined-science .spec-header-main {
+                position: relative;
+                width: 100%;
+                justify-content: center;
+                flex-grow: 0;
+            }
+
+            #spec-view.is-combined-science #backToDashBtn {
+                position: absolute;
+                left: 0;
+            }
         }
 
         /* Mobile-only styles and refined sizing */
@@ -404,11 +456,10 @@
             /* REFINED Mobile Header Layout */
             .spec-header .container {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch; /* Make items take full width */
                 gap: var(--space-3);
                 padding-top: var(--space-3);
                 padding-bottom: var(--space-3);
-                justify-content: flex-start;
             }
             .spec-header-main {
                 position: relative;
@@ -428,6 +479,10 @@
             .spec-summary-bar { 
                 justify-content: center; 
                 flex-wrap: wrap; 
+            }
+            .science-tab {
+                font-size: var(--font-size-xs);
+                padding: var(--space-2) var(--space-1);
             }
             
             .paper-section { border-radius: var(--radius-lg); }
@@ -497,6 +552,7 @@
                     </button>
                     <h1 id="specSubjectTitle"></h1>
                 </div>
+                <!-- Science tabs will be inserted here by JS -->
                 <div class="spec-summary-bar" id="specSummaryBar"></div>
             </div>
         </div>
@@ -542,14 +598,193 @@
     <script>
         // Data containing all subject specifications
         const subjectsData = {
-            'Mathematics':{specifications:{'Edexcel':{'Paper 1 (Non-Calculator)':{'Number':['Calculations with integers and decimals','Fractions and percentages','Indices and standard form','Surds'],'Algebra':['Simplifying expressions','Linear equations and inequalities','Sequences','Straight line graphs']},'Paper 2 (Calculator)':{'Number and Finance':['Percentage calculations','Compound interest','Estimation and approximation','Problem solving with money'],'Geometry and Measures':['Perimeter, area and volume','Transformations','Constructions and loci','Pythagoras and trigonometry']},'Paper 3 (Calculator)':{'Statistics and Probability':['Collecting and representing data','Averages and measures of spread','Probability','Tree diagrams and conditional probability'],'Advanced Topics':['Quadratic equations and graphs','Simultaneous equations','Circle theorems','Vectors']}}}},
-            'English Language':{specifications:{'AQA':{'Paper 1: Explorations in Creative Reading and Writing':{'Reading':['Identify and interpret explicit and implicit information','Explain and analyse how writers use language','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing':['Creative writing for a specified audience, purpose and form','Demonstrate effective use of vocabulary','Use a range of sentence structures','Use paragraphs effectively']},'Paper 2: Writers\' Viewpoints and Perspectives':{'Reading (19th and 21st Century Non-fiction)':['Identify and interpret explicit and implicit information','Analyse how writers use language and structure','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing (Transactional)':['Write to express viewpoints','Write for a specified audience, purpose and form','Organise information and ideas','Use vocabulary and sentence structures appropriately']}}}},
-            'English Literature':{specifications:{'AQA':{'Paper 1: Shakespeare and the 19th-century novel':{'Shakespeare (Macbeth)':['Plot and character analysis','Themes (e.g., ambition, guilt)','Context (historical, cultural)','Language, structure, and form'],'19th-Century Novel (A Christmas Carol)':['Plot and characterisation','Themes (e.g., poverty, redemption)','Setting and narrative techniques','Social and historical context']},'Paper 2: Modern texts and poetry':{'Modern Prose/Drama (An Inspector Calls)':['Character motivations and roles','Dramatic techniques and structure','Social, political, and historical context','Themes (e.g., social responsibility)'],'Poetry (Power and Conflict Cluster)':['Analysis of 15 set poems','Comparing poems on themes','Analysing language and structure','Understanding context']}}}},
-            'Biology':{specifications:{'AQA':{'Paper 1':{'1. Cell biology':['Cell structure','Cell division','Transport in cells'],'2. Organisation':['Principles of organisation','Animal tissues, organs and systems','Plant tissues, organs and systems'],'3. Infection and response':['Communicable diseases','Viral, bacterial, protist and fungal diseases','Human defence systems','Vaccination','Antibiotics and painkillers'],'4. Bioenergetics':['Photosynthesis','Respiration']},'Paper 2':{'5. Homeostasis and response':['The human nervous system','The endocrine system','Hormonal coordination in humans'],'6. Inheritance, variation and evolution':['Reproduction','Variation and evolution','The development of genetics','Cloning'],'7. Ecology':['Adaptations, interdependence and competition','Organisation of an ecosystem','Biodiversity and human interaction','Trophic levels and food production']}}}},
-            'Chemistry':{specifications:{'AQA':{'Paper 1':{'1. Atomic structure and the periodic table':['Atoms, elements and compounds','The periodic table','Properties of transition metals'],'2. Bonding, structure, and the properties of matter':['Chemical bonds','Properties of different structures','Structure and bonding of carbon'],'3. Quantitative chemistry':['Chemical measurements','Use of amount of substance in equations','Yield and atom economy'],'4. Chemical changes':['Reactivity of metals','Reactions of acids','Electrolysis'],'5. Energy changes':['Exothermic and endothermic reactions','Chemical cells and fuel cells']},'Paper 2':{'6. The rate and extent of chemical change':['Rate of reaction','Reversible reactions and dynamic equilibrium'],'7. Organic chemistry':['Carbon compounds as fuels and feedstock','Reactions of alkenes and alcohols','Synthetic and naturally occurring polymers'],'8. Chemical analysis':['Purity, formulations and chromatography','Identification of common gases and ions'],'9. Chemistry of the atmosphere':['The composition and evolution of the Earth’s atmosphere','Common atmospheric pollutants and their sources'],'10. Using resources':['Using the Earth’s resources and sustainable development','Potable water','Life cycle assessment and recycling']}}}},
-            'Physics':{specifications:{'AQA':{'Paper 1':{'1. Energy':['Energy changes in a system','Conservation and dissipation of energy','National and global energy resources'],'2. Electricity':['Current, potential difference and resistance','Series and parallel circuits','Domestic uses and safety','Static electricity'],'3. Particle model of matter':['Changes of state and the particle model','Internal energy and energy transfers','Particle model and pressure'],'4. Atomic structure':['Atoms and isotopes','Atoms and nuclear radiation','Nuclear fission and fusion']},'Paper 2':{'5. Forces':['Forces and their interactions','Work done and energy transfer','Forces and elasticity','Pressure and pressure differences in fluids','Moments, levers and gears'],'6. Waves':['Wave properties','Electromagnetic waves','Black body radiation'],'7. Magnetism and electromagnetism':['Permanent and induced magnetism','The motor effect','Induced potential, transformers and the National Grid'],'8. Space physics':['Solar system; stability of orbital motions; satellites','Red-shift and the Big Bang theory']}}}},
-            'Geography':{specifications:{'AQA':{'Paper 1: Living with the physical environment':{'1. The challenge of natural hazards':['Natural hazards','Tectonic hazards','Weather hazards','Climate change'],'2. The living world':['Ecosystems','Tropical rainforests','Hot deserts','Cold environments'],'3. Physical landscapes in the UK':['UK physical landscapes','Coastal landscapes in the UK','River landscapes in the UK','Glacial landscapes in the UK']},'Paper 2: Challenges in the human environment':{'4. Urban issues and challenges':['The urban world','Urban change in the UK','Urban sustainability'],'5. The changing economic world':['The development gap','Newly emerging economies (NEEs)','The changing UK economy'],'6. The challenge of resource management':['Resource management','Food management','Water management','Energy management']}}}},
-            'Computer Science':{specifications:{'OCR':{'Component 01: Computer systems':{'1.1 Systems Architecture':['The purpose of the CPU','Von Neumann architecture','Common CPU components and their function','The fetch-execute cycle'],'1.2 Memory & Storage':['The difference between RAM and ROM','The purpose of virtual memory','Flash memory','Types of storage: optical, magnetic, solid state'],'1.3 Computer Networks, Connections & Protocols':['Types of networks: LAN and WAN','Factors that affect network performance','The Internet and the DNS','Network topologies, hardware and protocols'],'1.4 Network Security':['Threats to computer systems and networks','Identifying and preventing vulnerabilities'],'1.s System Software':['Operating systems functions','User interface types','Memory management and multitasking','Utility system software'],'1.6 Ethical, Legal, Cultural & Environmental Impacts':['Impacts of digital technology on society','Legislation (e.g., Data Protection Act, Computer Misuse Act)','Open source vs proprietary software']},'Component 02: Computational thinking, algorithms and programming':{'2.1 Algorithms':['Computational thinking','Standard searching and sorting algorithms','Producing algorithms using pseudocode and flowcharts'],'2.2 Programming Fundamentals':['Variables, constants, operators, inputs, outputs, assignment','Programming constructs (sequence, selection, iteration)','String manipulation','Data types and arrays','Subroutines (functions and procedures)'],'2.3 Producing Robust Programs':['Defensive design','Maintainability','Testing','Syntax and logic errors'],'2.4 Boolean Logic':['Simple logic diagrams (AND, OR, NOT)','Truth tables','Combining Boolean operators'],'2.5 Programming Languages & IDEs':['High-level and low-level languages','Translators (compilers and interpreters)','Integrated Development Environment (IDE) tools']}}}}
+            'Mathematics (Higher)': {
+                specifications: {
+                    'Edexcel': {
+                        'Paper 1: Non-Calculator': {
+                            '1. Number': ['Order of operations', 'Negative numbers', 'Fractions, decimals and percentages', 'Powers, roots and standard form', 'Surds', 'Estimation and bounds'],
+                            '2. Algebra': ['Algebraic manipulation', 'Solving equations and inequalities', 'Sequences', 'Graphs of equations and functions'],
+                            '3. Geometry and measures': ['Properties of shapes', 'Constructions and loci', 'Perimeter, area and volume', 'Transformations', 'Pythagoras and trigonometry']
+                        },
+                        'Paper 2: Calculator': {
+                            '1. Number': ['Calculators and accuracy', 'Ratio, proportion and rates of change', 'Percentages and financial maths'],
+                            '2. Algebra': ['Further algebraic manipulation', 'Harder equations', 'Graphs of functions', 'Gradients and lines'],
+                            '3. Geometry and measures': ['Mensuration (area and volume)', 'Circle theorems', 'Vectors', 'Advanced trigonometry (Sine/Cosine rule)']
+                        },
+                        'Paper 3: Calculator': {
+                            '1. Statistics': ['Sampling', 'Data representation (diagrams and charts)', 'Averages and spread', 'Histograms and cumulative frequency'],
+                            '2. Probability': ['Basic probability', 'Tree diagrams', 'Venn diagrams and conditional probability'],
+                            '3. Ratio and proportion': ['Direct and inverse proportion', 'Growth and decay', 'Problem solving with ratio']
+                        }
+                    }
+                }
+            },
+            'English Language': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1: Explorations in Creative Reading and Writing': {
+                            'Section A: Reading': ['Q1: Identify explicit information', 'Q2: Explain language features', 'Q3: Analyse structure', 'Q4: Evaluate a statement about the text'],
+                            'Section B: Writing': ['Descriptive or narrative writing', 'Using language devices', 'Structuring a story', 'Spelling, punctuation and grammar']
+                        },
+                        'Paper 2: Writers\' Viewpoints and Perspectives': {
+                            'Section A: Reading': ['Q1: Identify true statements', 'Q2: Summarise differences', 'Q3: Explain language features', 'Q4: Compare writers\' viewpoints'],
+                            'Section B: Writing': ['Writing to present a viewpoint (e.g., letter, speech, article)', 'Structuring an argument', 'Using rhetorical devices', 'Spelling, punctuation and grammar']
+                        }
+                    }
+                }
+            },
+            'English Literature': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1: Shakespeare and the 19th-Century Novel': {
+                            'Shakespeare: Macbeth': ['Character analysis (Macbeth, Lady Macbeth, etc.)', 'Key themes (ambition, guilt, supernatural)', 'Context (Jacobean era, divine right of kings)', 'Language, structure, and form'],
+                            '19th-Century Novel: A Christmas Carol': ['Character analysis (Scrooge, The Ghosts)', 'Key themes (poverty, redemption, social responsibility)', 'Context (Victorian society, industrial revolution)', 'Narrative techniques and structure']
+                        },
+                        'Paper 2: Modern Texts and Poetry': {
+                            'Modern Text: An Inspector Calls': ['Character analysis (Birlings, Inspector Goole)', 'Dramatic devices (dramatic irony, timing)', 'Key themes (social responsibility, class, gender)', 'Social and historical context (1912 vs 1945)'],
+                            'Poetry Anthology: Power and Conflict': ['Analysing 15 set poems', 'Comparing poems on themes (e.g., effects of conflict, reality of war)', 'Analysing language and structure', 'Understanding context'],
+                            'Unseen Poetry': ['Analysing an unseen poem', 'Comparing two unseen poems']
+                        }
+                    }
+                }
+            },
+            'Biology': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1': {
+                            '1. Cell Biology': ['Prokaryotic and eukaryotic cells', 'Microscopy', 'Cell division (mitosis, meiosis)', 'Transport in cells (diffusion, osmosis, active transport)'],
+                            '2. Organisation': ['The human digestive system', 'The heart and blood vessels', 'Breathing and gas exchange', 'Plant tissues, organs and systems'],
+                            '3. Infection and Response': ['Communicable diseases', 'Human defence systems', 'Vaccination', 'Antibiotics and drug development'],
+                            '4. Bioenergetics': ['Photosynthesis', 'Respiration (aerobic and anaerobic)', 'Metabolism']
+                        },
+                        'Paper 2': {
+                            '5. Homeostasis and Response': ['The human nervous system', 'The endocrine system (hormones)', 'Homeostasis in action (blood glucose, water balance)', 'Hormones in human reproduction'],
+                            '6. Inheritance, Variation and Evolution': ['Reproduction', 'DNA and the genome', 'Genetic inheritance', 'Variation and evolution (natural selection)', 'Selective breeding and genetic engineering'],
+                            '7. Ecology': ['Communities and ecosystems', 'Organisation of an ecosystem (food chains, predator-prey cycles)', 'Biodiversity and human impact', 'Trophic levels and biomass', 'Food security']
+                        }
+                    }
+                }
+            },
+            'Chemistry': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1: Atomic Structure and the Periodic Table': {
+                            '1. Atomic Structure': ['Atoms, elements and compounds', 'Mixtures', 'The model of the atom', 'Relative atomic mass', 'Electronic structure'],
+                            '2. The Periodic Table': ['Development of the periodic table', 'Group 0 (Noble Gases)', 'Group 1 (Alkali Metals)', 'Group 7 (Halogens)'],
+                            '3. Structure and Bonding': ['Covalent, ionic and metallic bonding', 'Properties of different structures', 'Structure and bonding of carbon (diamond, graphite, graphene)'],
+                            '4. Quantitative Chemistry': ['Conservation of mass and balanced equations', 'Relative formula mass', 'Moles (Higher Tier)', 'Amounts of substances in equations (Higher Tier)'],
+                            '5. Chemical Changes': ['Reactivity of metals', 'Reactions of acids', 'Electrolysis'],
+                            '6. Energy Changes': ['Exothermic and endothermic reactions', 'Reaction profiles']
+                        },
+                        'Paper 2: The Rate and Extent of Chemical Change': {
+                            '7. Rate of Reaction': ['Calculating rates of reactions', 'Factors which affect the rate of reaction', 'Reversible reactions and dynamic equilibrium'],
+                            '8. Organic Chemistry': ['Crude oil and hydrocarbons', 'Reactions of alkanes and alkenes', 'Alcohols, carboxylic acids and esters', 'Polymers'],
+                            '9. Chemical Analysis': ['Pure substances', 'Chromatography', 'Identification of common gases and ions'],
+                            '10. Chemistry of the Atmosphere': ['Composition and evolution of the atmosphere', 'Greenhouse gases', 'Common atmospheric pollutants'],
+                            '11. Using Resources': ['Using the Earth’s resources and sustainable development', 'Potable water', 'Life cycle assessment and recycling', 'The Haber process and NPK fertilisers']
+                        }
+                    }
+                }
+            },
+            'Physics': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1': {
+                            '1. Energy': ['Energy stores and systems', 'Conservation of energy', 'Work, power and efficiency', 'Energy resources'],
+                            '2. Electricity': ['Standard circuit diagram symbols', 'Series and parallel circuits', 'Current, potential difference and resistance', 'Domestic uses and safety', 'Energy transfers in appliances', 'The National Grid'],
+                            '3. Particle Model of Matter': ['Density of materials', 'Changes of state', 'Internal energy', 'Specific latent heat and specific heat capacity', 'Particle motion in gases'],
+                            '4. Atomic Structure': ['Models of the atom', 'Atoms and isotopes', 'Radioactive decay and nuclear radiation', 'Nuclear equations', 'Half-lives and the random nature of decay', 'Hazards and uses of radiation', 'Nuclear fission and fusion']
+                        },
+                        'Paper 2': {
+                            '5. Forces': ['Scalar and vector quantities', 'Contact and non-contact forces', 'Gravity', 'Resultant forces', 'Work done and energy transfer', 'Forces and elasticity', 'Moments, levers and gears', 'Pressure in fluids', 'Forces and motion (velocity, acceleration)', 'Newton\'s Laws of Motion', 'Stopping distance'],
+                            '6. Waves': ['Transverse and longitudinal waves', 'Properties of waves (frequency, wavelength)', 'Reflection and refraction of waves', 'Sound waves', 'Waves for detection and exploration (ultrasound, seismic waves)'],
+                            '7. Magnetism and Electromagnetism': ['Poles of a magnet', 'Magnetic fields', 'The motor effect', 'The generator effect', 'Transformers'],
+                            '8. Space Physics': ['The Solar System', 'The life cycle of a star', 'Orbital motion', 'The expanding Universe (Red-shift, Big Bang theory)']
+                        }
+                    }
+                }
+            },
+            'Combined Science (Higher)': {
+                specifications: {
+                    'AQA': {
+                        'Biology Paper 1': {
+                            '1. Cell Biology': ['Prokaryotic and eukaryotic cells', 'Microscopy', 'Cell division (mitosis)', 'Transport in cells (diffusion, osmosis, active transport)'],
+                            '2. Organisation': ['The human digestive system', 'The heart and blood vessels', 'Breathing and gas exchange', 'Health issues', 'Plant tissues, organs and systems'],
+                            '3. Infection and Response': ['Communicable diseases', 'Viral, bacterial, protist and fungal diseases', 'Human defence systems', 'Vaccination', 'Antibiotics and painkillers'],
+                            '4. Bioenergetics': ['Photosynthesis', 'Respiration (aerobic and anaerobic)', 'Metabolism']
+                        },
+                        'Biology Paper 2': {
+                            '5. Homeostasis and Response': ['The human nervous system', 'The endocrine system', 'Control of blood glucose concentration', 'Hormones in human reproduction', 'Contraception'],
+                            '6. Inheritance, Variation and Evolution': ['Reproduction (sexual and asexual)', 'Meiosis', 'DNA and the genome', 'Genetic inheritance', 'Variation', 'Evolution and natural selection', 'Evidence for evolution'],
+                            '7. Ecology': ['Communities', 'Abiotic and biotic factors', 'Adaptations', 'Organisation of an ecosystem', 'Biodiversity and the effect of human interaction on ecosystems']
+                        },
+                        'Chemistry Paper 1': {
+                            '8. Atomic Structure and the Periodic Table': ['The periodic table', 'Properties of transition metals', 'Structure and bonding', 'Properties of substances', 'Quantitative chemistry (moles, concentrations)'],
+                            '9. Chemical Changes': ['Reactivity of metals', 'Reactions of acids', 'Electrolysis'],
+                            '10. Energy Changes': ['Exothermic and endothermic reactions', 'Reaction profiles', 'Energy change in reactions']
+                        },
+                        'Chemistry Paper 2': {
+                            '11. The Rate and Extent of Chemical Change': ['Rate of reaction', 'Reversible reactions and dynamic equilibrium', 'Equilibrium (Le Chatelier\'s principle)'],
+                            '12. Organic Chemistry': ['Hydrocarbons', 'Alcohols, carboxylic acids', 'Polymers'],
+                            '13. Chemical Analysis': ['Purity, formulations and chromatography', 'Identification of common gases and ions'],
+                            '14. Chemistry of the Atmosphere': ['History and composition of the atmosphere', 'Greenhouse gases', 'Atmospheric pollutants'],
+                            '15. Using Resources': ['Using the Earth’s resources and sustainable development', 'Life cycle assessment', 'Potable water']
+                        },
+                        'Physics Paper 1': {
+                            '16. Energy': ['Energy changes in a system', 'Conservation and dissipation of energy', 'National and global energy resources'],
+                            '17. Electricity': ['Current, potential difference and resistance', 'Series and parallel circuits', 'Domestic uses and safety', 'Energy transfers', 'The National Grid'],
+                            '18. Particle Model of Matter': ['Changes of state and the particle model', 'Internal energy and energy transfers', 'Particle model and pressure'],
+                            '19. Atomic Structure': ['Atoms and isotopes', 'Atoms and nuclear radiation', 'Hazards and uses of radioactive emissions']
+                        },
+                        'Physics Paper 2': {
+                            '20. Forces': ['Forces and their interactions', 'Work done and energy transfer', 'Forces and elasticity', 'Moments, levers and gears', 'Pressure and pressure differences in fluids', 'Forces and motion', 'Resultant forces', 'Newton\'s Laws of Motion'],
+                            '21. Waves': ['Wave properties', 'Transverse and longitudinal waves', 'Reflection of waves', 'Sound waves', 'Waves for detection and exploration'],
+                            '22. Magnetism and Electromagnetism': ['Permanent and induced magnetism', 'The motor effect', 'Induced potential']
+                        }
+                    }
+                }
+            },
+            'Geography': {
+                specifications: {
+                    'AQA': {
+                        'Paper 1: Living with the Physical Environment': {
+                            '1. The Challenge of Natural Hazards': ['Tectonic hazards (earthquakes, volcanoes)', 'Weather hazards (tropical storms, UK extreme weather)', 'Climate change (evidence, causes, effects, management)'],
+                            '2. The Living World': ['Ecosystems', 'Tropical rainforests (case study)', 'Hot deserts (case study)', 'Cold environments (optional)'],
+                            '3. Physical Landscapes in the UK': ['UK physical landscapes overview', 'Coastal landscapes (processes, landforms, management)', 'River landscapes (processes, landforms, management)', 'Glacial landscapes (optional)']
+                        },
+                        'Paper 2: Challenges in the Human Environment': {
+                            '4. Urban Issues and Challenges': ['The urban world (urbanisation trends)', 'Urban change in a major NEE/LIC city (case study)', 'Urban change in a major UK city (case study)', 'Sustainable urban development'],
+                            '5. The Changing Economic World': ['The development gap', 'Economic change in a major NEE/LIC country (case study)', 'Economic change in the UK'],
+                            '6. The Challenge of Resource Management': ['Resource management overview (food, water, energy)', 'Food management', 'Water management', 'Energy management']
+                        },
+                        'Paper 3: Geographical Applications': {
+                            'Issue Evaluation': ['Pre-release resource booklet analysis', 'Making a geographical decision'],
+                            'Fieldwork': ['Understanding fieldwork enquiry', 'Physical and human geography fieldwork', 'Data collection, presentation and analysis', 'Conclusion and evaluation']
+                        }
+                    }
+                }
+            },
+            'Computer Science': {
+                specifications: {
+                    'OCR': {
+                        'Component 01: Computer Systems': {
+                            '1.1 Systems Architecture': ['The purpose of the CPU', 'Von Neumann architecture', 'CPU performance (clock speed, cores, cache)', 'Embedded systems'],
+                            '1.2 Memory and Storage': ['RAM and ROM', 'Virtual memory', 'Flash memory', 'Primary and secondary storage', 'Units of data storage', 'Data compression'],
+                            '1.3 Computer Networks, Connections and Protocols': ['LAN and WAN', 'Factors affecting network performance', 'Client-server and peer-to-peer networks', 'Network hardware', 'The Internet', 'IP addressing and DNS', 'Network security (firewalls, proxies, encryption)'],
+                            '1.4 Network Security': ['Forms of attack (malware, phishing, social engineering)', 'Threats to networks (brute-force, DoS)', 'Identifying and preventing vulnerabilities'],
+                            '1.5 System Software': ['The function of the operating system', 'User interface types', 'Memory management and multitasking', 'Utility software (encryption, defragmentation, compression)'],
+                            '1.6 Ethical, Legal, Cultural and Environmental Impacts': ['Impacts of digital technology', 'Privacy issues', 'Legislation (Data Protection Act, Computer Misuse Act)', 'Open source vs proprietary software']
+                        },
+                        'Component 02: Computational Thinking, Algorithms and Programming': {
+                            '2.1 Algorithms': ['Computational thinking (abstraction, decomposition, algorithmic thinking)', 'Standard searching algorithms (binary, linear)', 'Standard sorting algorithms (bubble, merge, insertion)', 'Producing algorithms (pseudocode, flowcharts)'],
+                            '2.2 Programming Fundamentals': ['Variables, constants, operators, assignment', 'Sequence, selection, iteration', 'Data types', 'Arrays (one-dimensional and two-dimensional)', 'String manipulation', 'File handling operations', 'Subroutines (functions, procedures)'],
+                            '2.3 Producing Robust Programs': ['Defensive design', 'Input validation', 'Maintainability (comments, indentation)', 'Testing (iterative, final/terminal)', 'Types of errors (syntax, logic)', 'Test data (normal, boundary, invalid, erroneous)'],
+                            '2.4 Boolean Logic': ['Simple logic diagrams (AND, OR, NOT)', 'Combining Boolean operators', 'Truth tables'],
+                            '2.5 Programming Languages and IDEs': ['Characteristics of languages (high-level, low-level)', 'Translators (compilers, interpreters)', 'IDE tools (editors, error diagnostics, run-time environment)']
+                        }
+                    }
+                }
+            }
         };
 
         // --- Application State ---
@@ -597,10 +832,8 @@
                 const target = e.target;
                 const closest = (selector) => target.closest(selector);
                 
-                // Close modal if backdrop is clicked
                 if (target.classList.contains('modal')) { hideModal(target.id); }
 
-                // --- Button Clicks ---
                 const button = closest('button');
                 if (button) {
                     const id = button.id;
@@ -609,12 +842,14 @@
                     else if (id === 'openThemeSettingsBtn') { renderThemeSettingsModal(); showModal('themeSettingsModal'); }
                     else if (id === 'backToDashBtn') showView('dashboard');
                     
-                    // Modal buttons
                     if (id === 'cancelEditSubjects' || id === 'closeThemeSettingsBtn') hideModal(closest('.modal').id);
                     if (id === 'saveEditSubjects') handleSaveSettings();
+
+                    if(button.classList.contains('science-tab')) {
+                        handleScienceTabClick(button);
+                    }
                 }
                 
-                // --- Subject Card Clicks ---
                 const subjectCard = closest('.subject-card');
                 if (subjectCard) {
                     if(document.getElementById('main-dashboard').contains(subjectCard)) showSpecView(subjectCard.dataset.subject);
@@ -622,11 +857,9 @@
                     if(document.getElementById('editSubjectsModal').contains(subjectCard)) toggleSettingsSubject(subjectCard);
                 }
 
-                // --- RAG Dot Clicks ---
                 const ragDot = closest('.rag-dot');
                 if (ragDot) { handleRagSelection(ragDot); }
 
-                // --- Filter Clicks ---
                 const filterTrigger = closest('.summary-item');
                 if (filterTrigger) {
                     currentRagFilter = filterTrigger.dataset.filter;
@@ -635,7 +868,6 @@
                     applyRagFilter();
                 }
 
-                // --- Theme Option Clicks ---
                 const themeOption = closest('.theme-option');
                 if (themeOption) {
                     applyTheme(themeOption.dataset.theme);
@@ -660,7 +892,6 @@
             document.documentElement.dataset.theme = themeName;
             currentTheme = themeName;
             localStorage.setItem('studyTrackerTheme', themeName);
-            // Update active class on theme buttons if modal is open
             document.querySelectorAll('.theme-option').forEach(opt => {
                 opt.classList.toggle('active', opt.dataset.theme === themeName);
             });
@@ -710,7 +941,7 @@
         }
 
         function applyRagFilter() {
-            const topics = document.querySelectorAll('#specContent .topic');
+            const topics = document.querySelectorAll('.science-content-panel:not(.hidden) .topic, #specContent > .paper-section .topic');
             topics.forEach(topic => {
                 let hasVisibleSubtopic = false;
                 const subtopics = topic.querySelectorAll('.subtopic');
@@ -729,14 +960,14 @@
                 topic.classList.toggle('filtered-out', !hasVisibleSubtopic);
             });
 
-            const paperSections = document.querySelectorAll('#specContent .paper-section');
+            const paperSections = document.querySelectorAll('.science-content-panel:not(.hidden) .paper-section, #specContent > .paper-section');
             paperSections.forEach(paper => {
                 const hasVisibleTopic = paper.querySelector('.topic:not(.filtered-out)');
                 paper.classList.toggle('filtered-out', !hasVisibleTopic);
             });
 
             const noResultsMessage = document.getElementById('noResultsMessage');
-            const hasVisibleContent = document.querySelector('#specContent .paper-section:not(.filtered-out)');
+            const hasVisibleContent = document.querySelector('.science-content-panel:not(.hidden), #specContent > .paper-section:not(.filtered-out)');
             if (noResultsMessage) {
                 noResultsMessage.classList.toggle('hidden', hasVisibleContent);
             }
@@ -780,45 +1011,105 @@
             else { if (document.activeElement === lastElement) { firstElement.focus(); e.preventDefault(); } }
         }
         
-        function showSpecView(subject) { 
-            currentContext.subject = subject; 
+        function showSpecView(subject) {
+            const specView = document.getElementById('spec-view');
+            specView.classList.remove('is-combined-science'); // Always reset first
+
+            const existingTabs = document.querySelector('.science-tabs');
+            if (existingTabs) existingTabs.remove();
+
+            currentContext.subject = subject;
             document.getElementById('specSubjectTitle').innerHTML = `<span>${subject}</span>`;
             
+            if (subject === 'AQA Combined Science (Higher)') {
+                specView.classList.add('is-combined-science');
+            }
+
             currentRagFilter = 'all';
-            renderSpecContent(subject); 
-            showView('spec'); 
+            renderSpecContent(subject);
+            showView('spec');
         }
 
-        // --- Content Rendering ---
-        function renderSpecContent(subject) { 
-            const contentEl = document.getElementById('specContent'); 
-            const subjectInfo = subjectsData[subject]; 
-            if (!subjectInfo) { contentEl.innerHTML = '<p>Subject data not available.</p>'; return; } 
-            const examBoard = Object.keys(subjectInfo.specifications)[0]; 
-            const specification = subjectInfo.specifications[examBoard]; 
-            if (!specification) { contentEl.innerHTML = '<p>Specification data not available.</p>'; return; } 
+        function handleScienceTabClick(tab) {
+            const science = tab.dataset.science;
+            document.querySelectorAll('.science-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            document.querySelectorAll('.science-content-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.dataset.science !== science);
+            });
             
-            contentEl.innerHTML = ''; 
-            Object.keys(specification).forEach((paper, i) => { 
-                const paperEl = document.createElement('div'); 
-                paperEl.className = 'paper-section';
-                paperEl.style.animationDelay = `${i * 100}ms`;
-                paperEl.dataset.paper = paper;
-                paperEl.dataset.subject = subject;
-                paperEl.appendChild(createPaperHeaderElement(subject, paper)); 
-                Object.keys(specification[paper]).forEach(topic => { 
-                    const topicEl = document.createElement('div'); 
-                    topicEl.className = 'topic'; 
-                    topicEl.dataset.topicName = topic;
-                    topicEl.innerHTML = `<div class="topic-header"><div class="topic-header-content">${topic}</div><div class="topic-progress-bar"><div class="topic-progress-fill"></div></div></div>`; 
-                    specification[paper][topic].forEach(subtopic => topicEl.appendChild(createSubtopicElement(subject, examBoard, paper, topic, subtopic))); 
-                    paperEl.appendChild(topicEl); 
-                }); 
-                contentEl.appendChild(paperEl); 
-            }); 
             updateAllTopicProgress();
             renderSummaryBar();
             applyRagFilter();
+        }
+
+        // --- Content Rendering ---
+        function renderSpecContent(subject) {
+            const contentEl = document.getElementById('specContent');
+            const subjectInfo = subjectsData[subject];
+            if (!subjectInfo) { contentEl.innerHTML = '<p>Subject data not available.</p>'; return; }
+            const examBoard = Object.keys(subjectInfo.specifications)[0];
+            const specification = subjectInfo.specifications[examBoard];
+            if (!specification) { contentEl.innerHTML = '<p>Specification data not available.</p>'; return; }
+
+            contentEl.innerHTML = '';
+
+            if (subject === 'AQA Combined Science (Higher)') {
+                const tabContainer = document.createElement('div');
+                tabContainer.className = 'science-tabs';
+                tabContainer.innerHTML = `
+                    <button class="science-tab active" data-science="biology">Biology</button>
+                    <button class="science-tab" data-science="chemistry">Chemistry</button>
+                    <button class="science-tab" data-science="physics">Physics</button>
+                `;
+                document.querySelector('.spec-header .container').insertBefore(tabContainer, document.getElementById('specSummaryBar'));
+
+                const papersByScience = { biology: [], chemistry: [], physics: [] };
+                Object.keys(specification).forEach(paperName => {
+                    if (paperName.toLowerCase().includes('biology')) papersByScience.biology.push(paperName);
+                    else if (paperName.toLowerCase().includes('chemistry')) papersByScience.chemistry.push(paperName);
+                    else if (paperName.toLowerCase().includes('physics')) papersByScience.physics.push(paperName);
+                });
+
+                Object.keys(papersByScience).forEach(science => {
+                    const sciencePanel = document.createElement('div');
+                    sciencePanel.className = 'science-content-panel';
+                    sciencePanel.dataset.science = science;
+                    if (science !== 'biology') sciencePanel.classList.add('hidden');
+
+                    papersByScience[science].forEach(paper => {
+                        sciencePanel.appendChild(createPaperElement(subject, examBoard, specification, paper));
+                    });
+                    contentEl.appendChild(sciencePanel);
+                });
+            } else {
+                Object.keys(specification).forEach((paper, i) => {
+                    contentEl.appendChild(createPaperElement(subject, examBoard, specification, paper, i));
+                });
+            }
+
+            updateAllTopicProgress();
+            renderSummaryBar();
+            applyRagFilter();
+        }
+
+        function createPaperElement(subject, examBoard, specification, paper, index = 0) {
+            const paperEl = document.createElement('div');
+            paperEl.className = 'paper-section';
+            paperEl.style.animationDelay = `${index * 100}ms`;
+            paperEl.dataset.paper = paper;
+            paperEl.dataset.subject = subject;
+            paperEl.appendChild(createPaperHeaderElement(subject, paper));
+            Object.keys(specification[paper]).forEach(topic => {
+                const topicEl = document.createElement('div');
+                topicEl.className = 'topic';
+                topicEl.dataset.topicName = topic;
+                topicEl.innerHTML = `<div class="topic-header"><div class="topic-header-content">${topic}</div><div class="topic-progress-bar"><div class="topic-progress-fill"></div></div></div>`;
+                specification[paper][topic].forEach(subtopic => topicEl.appendChild(createSubtopicElement(subject, examBoard, paper, topic, subtopic)));
+                paperEl.appendChild(topicEl);
+            });
+            return paperEl;
         }
         
         function createSubtopicElement(subject, examBoard, paper, topic, subtopic) { 
@@ -858,7 +1149,7 @@
         }
 
         function updateAllTopicProgress() {
-            document.querySelectorAll('.topic').forEach(topicEl => {
+            document.querySelectorAll('.science-content-panel:not(.hidden) .topic, #specContent > .paper-section .topic').forEach(topicEl => {
                 const subtopics = topicEl.querySelectorAll('.subtopic');
                 const totalSubtopics = subtopics.length;
                 if (totalSubtopics === 0) return;
@@ -907,21 +1198,26 @@
         function renderSummaryBar() {
             const summaryBar = document.getElementById('specSummaryBar');
             if (!summaryBar) return;
-            const counts = { red: 0, amber: 0, green: 0 };
-            const allSubtopicKeys = Array.from(document.querySelectorAll('.rag-selector')).map(el => el.dataset.subtopicKey);
+            const counts = { red: 0, amber: 0, green: 0, all: 0 };
             
-            allSubtopicKeys.forEach(key => {
+            const visibleSelectors = document.querySelectorAll('.science-content-panel:not(.hidden) .rag-selector, #specContent > .paper-section .rag-selector');
+            counts.all = visibleSelectors.length;
+
+            visibleSelectors.forEach(el => {
+                const key = el.dataset.subtopicKey;
                 const status = ragStatus[key]?.status;
                 if (status && counts.hasOwnProperty(status)) {
                     counts[status]++;
                 }
             });
+            
+            const unrated = counts.all - (counts.red + counts.amber + counts.green);
 
             summaryBar.innerHTML = `
-                <div class="summary-item active" data-filter="all" title="Show All Topics"><span>All</span></div>
-                <div class="summary-item" data-filter="red" title="Filter 'Not Confident'"><span class="dot red"></span><span>${counts.red}</span></div>
-                <div class="summary-item" data-filter="amber" title="Filter 'Needs Review'"><span class="dot amber"></span><span>${counts.amber}</span></div>
-                <div class="summary-item" data-filter="green" title="Filter 'Confident'"><span class="dot green"></span><span>${counts.green}</span></div>
+                <div class="summary-item ${currentRagFilter === 'all' ? 'active' : ''}" data-filter="all" title="Show All Topics"><span>All (${counts.all})</span></div>
+                <div class="summary-item ${currentRagFilter === 'red' ? 'active' : ''}" data-filter="red" title="Filter 'Not Confident'"><span class="dot red"></span><span>${counts.red}</span></div>
+                <div class="summary-item ${currentRagFilter === 'amber' ? 'active' : ''}" data-filter="amber" title="Filter 'Needs Review'"><span class="dot amber"></span><span>${counts.amber}</span></div>
+                <div class="summary-item ${currentRagFilter === 'green' ? 'active' : ''}" data-filter="green" title="Filter 'Confident'"><span class="dot green"></span><span>${counts.green}</span></div>
             `;
         }
         
@@ -973,5 +1269,121 @@
         function renderEditSubjectsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
 
     </script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+<script>
+  // Initialize Firebase using your config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNup_F4ceJ6HoRT2FkNZi3hVN-D-JxVuE",
+    authDomain: "gcse-study-tracker.firebaseapp.com",
+    projectId: "gcse-study-tracker",
+    storageBucket: "gcse-study-tracker.firebasestorage.app",
+    messagingSenderId: "168245347452",
+    appId: "1:168245347452:web:14fcd304253ae9806375f9"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
+<!-- Auth Buttons UI -->
+<div id="authContainer" style="margin: 1em 0; text-align: center;">
+  <button id="signInGoogle" class="md-button">Sign In with Google</button>
+  <button id="signInEmail" class="md-button">Sign In with Email</button>
+  <button id="signOut" class="md-button hidden">Sign Out</button>
+</div>
+
+<script>
+  // Auth Buttons
+  const signInGoogleBtn = document.getElementById('signInGoogle');
+  const signInEmailBtn = document.getElementById('signInEmail');
+  const signOutBtn = document.getElementById('signOut');
+
+  signInGoogleBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(console.error);
+  });
+
+  signInEmailBtn.addEventListener('click', () => {
+    const email = prompt("Enter your email:");
+    const password = prompt("Enter your password:");
+    if (email && password) {
+      auth.signInWithEmailAndPassword(email, password).catch(err => {
+        if (err.code === 'auth/user-not-found') {
+          auth.createUserWithEmailAndPassword(email, password).catch(console.error);
+        } else {
+          console.error(err);
+        }
+      });
+    }
+  });
+
+  signOutBtn.addEventListener('click', () => {
+    auth.signOut();
+  });
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      console.log("Logged in as:", user.email);
+      signInGoogleBtn.classList.add('hidden');
+      signInEmailBtn.classList.add('hidden');
+      signOutBtn.classList.remove('hidden');
+      loadUserData(user.uid);
+    } else {
+      console.log("Logged out");
+      signInGoogleBtn.classList.remove('hidden');
+      signInEmailBtn.classList.remove('hidden');
+      signOutBtn.classList.add('hidden');
+      showView('onboarding');
+    }
+  });
+
+  // Firestore Save
+  function saveUserData(uid) {
+    db.collection('users').doc(uid).set({
+      selectedSubjects: selectedSubjects,
+      ragStatus: ragStatus,
+      theme: currentTheme
+    }).then(() => {
+      console.log("Data saved to Firestore");
+    }).catch(console.error);
+  }
+
+  // Firestore Load
+  function loadUserData(uid) {
+    db.collection('users').doc(uid).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        selectedSubjects = data.selectedSubjects || [];
+        ragStatus = data.ragStatus || {};
+        currentTheme = data.theme || 'dark';
+        applyTheme(currentTheme);
+        showView('dashboard');
+      } else {
+        console.log("No data found, showing onboarding");
+        showView('onboarding');
+      }
+    }).catch(console.error);
+  }
+
+  // Update saveData() function
+  function saveData() {
+    const user = auth.currentUser;
+    if (user) {
+      saveUserData(user.uid);
+    } else {
+      console.warn("No user logged in, cannot save");
+    }
+  }
+</script>
+
+
+
 </body>
 </html>
