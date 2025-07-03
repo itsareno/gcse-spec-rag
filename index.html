@@ -25,12 +25,12 @@
             --color-accent: #FFFFFF;
             --color-accent-text: #000000;
             
-            /* RAG Palette */
-            --rag-red: #FF453A;
-            --rag-amber: #FF9F0A;
-            --rag-green: #30D158;
+            /* UPDATED: RAG Palette for high contrast */
+            --rag-red: #EF4444;
+            --rag-amber: #D97706;
+            --rag-green: #059669;
 
-            /* Sizing & Spacing System (4px base) */
+            /* Sizing & Spacing System (4px base) - Base sizes for desktop */
             --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
             --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
 
@@ -41,7 +41,7 @@
             --radius-xl: 24px;
             --radius-full: 999px;
 
-            /* Typography System */
+            /* Typography System - Base sizes for desktop */
             --font-size-xs: 12px; --font-size-sm: 14px; --font-size-md: 16px;
             --font-size-lg: 20px; --font-size-xl: 24px; --font-size-xxl: 32px;
 
@@ -70,9 +70,6 @@
 
         /* Main Views */
         .onboarding, .main-dashboard, .spec-view { animation: slideUpFadeIn 0.6s var(--easing) both; }
-        .main-dashboard .container, .spec-view .container {
-             padding-bottom: 80px; /* Increased padding to ensure full scroll */
-        }
 
         /* Modal Base Styles */
         .modal { 
@@ -138,8 +135,6 @@
             justify-content: center;
             min-height: 100vh;
             padding: var(--space-4);
-            padding-bottom: 80px; /* Add padding to prevent cut-off */
-            overflow-y: auto; /* Ensure scrollability if content is too tall */
         }
         .onboarding-card {
             background: var(--color-surface);
@@ -219,7 +214,7 @@
         .md-button.text { background: transparent; color: var(--color-text-primary); border-color: var(--color-outline); }
         .md-button.text:hover { background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); }
         .md-button.text.destructive { color: var(--rag-red); border-color: var(--color-outline); }
-        .md-button.text.destructive:hover { border-color: var(--rag-red); background-color: rgba(255, 69, 58, 0.1); }
+        .md-button.text.destructive:hover { border-color: var(--rag-red); background-color: rgba(239, 68, 68, 0.1); }
         .dashboard-footer { text-align: center; margin-top: var(--space-7); }
         .dashboard-divider { display: flex; align-items: center; text-align: center; margin: var(--space-7) 0; color: var(--color-text-secondary); }
         .dashboard-divider::before, .dashboard-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--color-outline); }
@@ -249,16 +244,42 @@
         .filter-btn { background: transparent; border: none; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 600; padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-speed) var(--easing); }
         .filter-btn:hover { color: var(--color-text-primary); background-color: var(--color-surface-hover); }
         .filter-btn.active { background-color: var(--color-accent); color: var(--color-accent-text); }
-        .filter-btn.red.active { background-color: var(--rag-red); }
-        .filter-btn.amber.active { background-color: var(--rag-amber); }
-        .filter-btn.green.active { background-color: var(--rag-green); }
+        .filter-btn.red.active { background-color: var(--rag-red); color: white; }
+        .filter-btn.amber.active { background-color: var(--rag-amber); color: white; }
+        .filter-btn.green.active { background-color: var(--rag-green); color: white; }
+        
+        /* RAG dot styling */
         .rag-selector { display: flex; gap: var(--space-2); flex-shrink: 0; }
-        .rag-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: all var(--transition-speed) var(--easing); opacity: 0.5; }
+        .rag-dot {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all var(--transition-speed) var(--easing);
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .rag-dot:hover { opacity: 1; transform: scale(1.1); }
-        .rag-dot.selected { opacity: 1; border-color: var(--color-accent); transform: scale(1.1); box-shadow: 0 0 12px -2px var(--color-accent); }
-        .rag-dot.red { background-color: var(--rag-red); }
-        .rag-dot.amber { background-color: var(--rag-amber); }
-        .rag-dot.green { background-color: var(--rag-green); }
+        .rag-dot .check-icon {
+            display: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-text-primary); /* REFINED: White check on all */
+        }
+        
+        .rag-dot.selected {
+            opacity: 1;
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 16px -2px var(--shadow-color);
+        }
+        .rag-dot.selected .check-icon { display: block; }
+        
+        .rag-dot.red { background-color: var(--rag-red); --shadow-color: var(--rag-red); }
+        .rag-dot.amber { background-color: var(--rag-amber); --shadow-color: var(--rag-amber); }
+        .rag-dot.green { background-color: var(--rag-green); --shadow-color: var(--rag-green); }
         .subtopic.filtered-out, .topic.filtered-out { display: none; }
 
         /* Forms */
@@ -274,6 +295,18 @@
         input[type="color"]::-webkit-color-swatch { border: 2px solid var(--color-outline); border-radius: 50%; }
         input[type="color"].selected::-webkit-color-swatch { border-color: var(--color-accent); }
         
+        .form-error-message {
+            display: none;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--rag-red);
+            border: 1px solid var(--rag-red);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-4);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
         /* Resource Item Styling */
         #resourcesList.editing .resource-item { cursor: pointer; }
         #resourcesList.editing .resource-item:hover { transform: scale(1.02); background-color: var(--color-surface-hover); }
@@ -300,69 +333,71 @@
             .spec-header h1 { font-size: var(--font-size-xxl); }
         }
 
-        /* Mobile-only styles */
+        /* Mobile-only styles and refined sizing */
         @media (max-width: 768px) {
+            :root {
+                --space-1: 3px;  --space-2: 6px;  --space-3: 10px; --space-4: 14px;
+                --space-5: 18px; --space-6: 20px; --space-7: 28px; --space-8: 36px;
+
+                --font-size-xs: 11px; --font-size-sm: 13px; --font-size-md: 15px;
+                --font-size-lg: 18px; --font-size-xl: 22px; --font-size-xxl: 26px;
+            }
+
             .container { padding: 0 var(--space-4); }
 
-            .onboarding-card { padding: var(--space-6) var(--space-4); }
+            .onboarding-card { padding: var(--space-7) var(--space-4); }
             .onboarding-card h1 { font-size: var(--font-size-xl); }
 
+            .countdown-container { padding: var(--space-6) 0; }
             .countdown-timer { gap: var(--space-2); }
-            .countdown-item { padding: var(--space-2); min-width: 65px; border-radius: var(--radius-md); }
+            .countdown-item { padding: var(--space-3); min-width: 65px; border-radius: var(--radius-md); }
             .countdown-item .value { font-size: var(--font-size-xl); }
             .countdown-item .label { font-size: 10px; margin-top: var(--space-1); }
 
             .spec-header {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
+                display: grid;
+                grid-template-areas:
+                    "back title"
+                    "controls controls";
+                grid-template-columns: auto 1fr;
+                align-items: center;
                 gap: var(--space-3);
                 padding: var(--space-3) var(--space-4);
             }
-            .spec-header-row-1 {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: var(--space-2);
-            }
-            .spec-header #backToDashBtn {
-                flex-shrink: 0;
-                width: 40px;
-                height: 40px;
-                padding: 0;
-            }
-            .spec-header #backToDashBtn .material-icons {
-                font-size: var(--font-size-lg);
-            }
+            .spec-header #backToDashBtn { grid-area: back; }
             .spec-header h1 {
-                flex-grow: 1;
+                grid-area: title;
                 font-size: var(--font-size-lg);
                 text-align: center;
-                margin: 0;
-                padding: 0;
+                margin-right: 0;
             }
             .spec-header .filter-controls {
-                align-self: center;
+                grid-area: controls;
                 margin-left: 0;
+                justify-self: center;
             }
-            .filter-btn {
-                padding: var(--space-1) var(--space-3);
-                font-size: var(--font-size-xs);
+            
+            .paper-section { border-radius: var(--radius-lg); }
+            .paper-header { padding: var(--space-4); font-size: var(--font-size-md); }
+            .topic-header { padding: var(--space-3) var(--space-4); }
+            .subtopic { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: var(--space-3); 
+                padding: var(--space-4); 
             }
-
-            .paper-header { padding: var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
-            .paper-header-title { flex-direction: row; justify-content: space-between; align-items: center; }
-            .paper-resources-btn { align-self: flex-end; }
-
-            .subtopic { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
             .subtopic-details { width: 100%; justify-content: space-between; }
-            .subtopic-review-info { font-size: 10px; }
+            .subtopic-title { padding-right: 0; }
+
+            .md-button { height: 40px; padding: 0 var(--space-4); font-size: var(--font-size-sm); }
+            .modal-content { border-radius: var(--radius-lg); }
+            .modal-header, .modal-footer { padding: var(--space-4); }
+            .modal-body { padding: var(--space-5); }
         }
 
     </style>
 </head>
 <body>
-    <!-- Onboarding View: Initial setup for new users -->
     <div id="onboarding" class="onboarding">
         <div class="onboarding-card">
             <h1>Welcome to Your Study Hub</h1>
@@ -375,7 +410,6 @@
         </div>
     </div>
     
-    <!-- Main Dashboard: Shows selected subjects and countdown -->
     <div id="main-dashboard" class="main-dashboard hidden">
         <div class="container">
             <div class="countdown-container">
@@ -393,17 +427,13 @@
         </div>
     </div>
 
-    <!-- Specification View: Detailed breakdown of a subject -->
     <div id="spec-view" class="spec-view hidden">
         <div class="container">
             <div class="spec-header">
-                <div class="spec-header-row-1">
-                    <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
-                        <span class="material-icons">arrow_back</span>
-                    </button>
-                    <h1 id="specSubjectTitle"></h1>
-                    <div style="width: 40px;"></div> <!-- Spacer to balance back button -->
-                </div>
+                <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <h1 id="specSubjectTitle"></h1>
                 <div class="filter-controls">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn red" data-filter="red" title="Filter by Red">R</button>
@@ -415,7 +445,6 @@
         </div>
     </div>
 
-    <!-- Modals for various settings and actions -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Edit Subjects</h2></div>
@@ -448,6 +477,7 @@
                 <div class="form-group"><label for="resourceTitleInput">Title</label><input type="text" id="resourceTitleInput" class="form-input" placeholder="e.g., My Notes, YouTube Video"></div>
                 <div class="form-group"><label for="resourceLinkInput">URL</label><input type="text" id="resourceLinkInput" class="form-input" placeholder="e.g., https://www.youtube.com/watch?v=..."></div>
                 <div class="form-group"><label>Color Tag</label><div class="color-picker" id="resourceColorPicker"></div></div>
+                <div class="form-error-message" id="resourceFormError"></div>
             </div>
             <div class="modal-footer">
                 <button class="md-button text destructive" id="deleteResourceBtn">Delete</button>
@@ -460,7 +490,7 @@
     <script>
         // Data containing all subject specifications
         const subjectsData = {
-            'Mathematics':{specifications:{'Edexcel':{'Paper 1 - Non-Calculator':{'Number':['Calculations with integers and decimals','Fractions and percentages','Indices and standard form','Surds'],'Algebra':['Simplifying expressions','Linear equations and inequalities','Sequences','Straight line graphs']},'Paper 2 (Calculator)':{'Number and Finance':['Percentage calculations','Compound interest','Estimation and approximation','Problem solving with money'],'Geometry and Measures':['Perimeter, area and volume','Transformations','Constructions and loci','Pythagoras and trigonometry']},'Paper 3 (Calculator)':{'Statistics and Probability':['Collecting and representing data','Averages and measures of spread','Probability','Tree diagrams and conditional probability'],'Advanced Topics':['Quadratic equations and graphs','Simultaneous equations','Circle theorems','Vectors']}}}},
+            'Mathematics':{specifications:{'Edexcel':{'Paper 1 (Non-Calculator)':{'Number':['Calculations with integers and decimals','Fractions and percentages','Indices and standard form','Surds'],'Algebra':['Simplifying expressions','Linear equations and inequalities','Sequences','Straight line graphs']},'Paper 2 (Calculator)':{'Number and Finance':['Percentage calculations','Compound interest','Estimation and approximation','Problem solving with money'],'Geometry and Measures':['Perimeter, area and volume','Transformations','Constructions and loci','Pythagoras and trigonometry']},'Paper 3 (Calculator)':{'Statistics and Probability':['Collecting and representing data','Averages and measures of spread','Probability','Tree diagrams and conditional probability'],'Advanced Topics':['Quadratic equations and graphs','Simultaneous equations','Circle theorems','Vectors']}}}},
             'English Language':{specifications:{'AQA':{'Paper 1: Explorations in Creative Reading and Writing':{'Reading':['Identify and interpret explicit and implicit information','Explain and analyse how writers use language','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing':['Creative writing for a specified audience, purpose and form','Demonstrate effective use of vocabulary','Use a range of sentence structures','Use paragraphs effectively']},'Paper 2: Writers\' Viewpoints and Perspectives':{'Reading (19th and 21st Century Non-fiction)':['Identify and interpret explicit and implicit information','Analyse how writers use language and structure','Evaluate texts critically','Compare writers\' ideas and perspectives'],'Writing (Transactional)':['Write to express viewpoints','Write for a specified audience, purpose and form','Organise information and ideas','Use vocabulary and sentence structures appropriately']}}}},
             'English Literature':{specifications:{'AQA':{'Paper 1: Shakespeare and the 19th-century novel':{'Shakespeare (Macbeth)':['Plot and character analysis','Themes (e.g., ambition, guilt)','Context (historical, cultural)','Language, structure, and form'],'19th-Century Novel (A Christmas Carol)':['Plot and characterisation','Themes (e.g., poverty, redemption)','Setting and narrative techniques','Social and historical context']},'Paper 2: Modern texts and poetry':{'Modern Prose/Drama (An Inspector Calls)':['Character motivations and roles','Dramatic techniques and structure','Social, political, and historical context','Themes (e.g., social responsibility)'],'Poetry (Power and Conflict Cluster)':['Analysis of 15 set poems','Comparing poems on themes','Analysing language and structure','Understanding context']}}}},
             'Biology':{specifications:{'AQA':{'Paper 1':{'1. Cell biology':['Cell structure','Cell division','Transport in cells'],'2. Organisation':['Principles of organisation','Animal tissues, organs and systems','Plant tissues, organs and systems'],'3. Infection and response':['Communicable diseases','Viral, bacterial, protist and fungal diseases','Human defence systems','Vaccination','Antibiotics and painkillers'],'4. Bioenergetics':['Photosynthesis','Respiration']},'Paper 2':{'5. Homeostasis and response':['The human nervous system','The endocrine system','Hormonal coordination in humans'],'6. Inheritance, variation and evolution':['Reproduction','Variation and evolution','The development of genetics','Cloning'],'7. Ecology':['Adaptations, interdependence and competition','Organisation of an ecosystem','Biodiversity and human interaction','Trophic levels and food production']}}}},
@@ -480,19 +510,14 @@
         let isResourceEditing = false;
         const views = {};
         const modals = {};
-        let audioCtx; 
+        let audioCtx;
+        let lastFocusedElement;
 
         // --- Core Application Logic ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Cache view elements
             Object.assign(views, {onboarding: document.getElementById('onboarding'),dashboard: document.getElementById('main-dashboard'),spec: document.getElementById('spec-view')});
-            
-            // Cache modal elements
-            document.querySelectorAll('.modal').forEach(modal => {
-                modals[modal.id] = modal;
-            });
-            
-            // Load data from localStorage
+            document.querySelectorAll('.modal').forEach(modal => { modals[modal.id] = modal; });
+
             try { 
                 const data = JSON.parse(localStorage.getItem('studyTrackerDataV2'));
                 if(data) { 
@@ -502,22 +527,22 @@
                 }
             } catch (e) { console.error("Could not parse data, starting fresh.", e); }
             
-            // Initial view logic
             if (selectedSubjects.length > 0) { showView('dashboard'); } 
             else { showView('onboarding'); }
             addEventListeners();
         });
 
-        // --- Data Persistence ---
         function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, paperResources, ragStatus })); }
 
-        // --- Event Handling ---
         function addEventListeners() {
             document.body.addEventListener('click', e => {
                 const target = e.target;
                 const closest = (selector) => target.closest(selector);
                 
-                // Button clicks
+                if (target.classList.contains('modal')) {
+                    hideModal(target.id);
+                }
+
                 const button = closest('button');
                 if (button) {
                     const id = button.id;
@@ -530,12 +555,10 @@
                     else if (closest('.resource-delete-btn')) handleDeleteResource(closest('.resource-delete-btn').dataset.index);
                     else if (id === 'saveResourceBtn') handleSaveResource();
                     
-                    // Modal close/save buttons
                     if (id === 'cancelSettings' || id === 'closeResourcesModal' || id === 'cancelEditResource') hideModal(closest('.modal').id);
                     if (id === 'saveSettings') handleSaveSettings();
                 }
                 
-                // Subject card clicks
                 const subjectCard = closest('.subject-card');
                 if (subjectCard) {
                     if(document.getElementById('main-dashboard').contains(subjectCard)) showSpecView(subjectCard.dataset.subject);
@@ -543,19 +566,15 @@
                     if(document.getElementById('settingsModal').contains(subjectCard)) toggleSettingsSubject(subjectCard);
                 }
 
-                // Resource item clicks (in edit mode)
                 const resourceItem = closest('.resource-item');
                 if (resourceItem && isResourceEditing) { if (!target.closest('.resource-delete-btn')) { showEditResourceModal(resourceItem.dataset.index); } }
 
-                // Color picker clicks
                 const colorDot = closest('.color-dot');
                 if (colorDot && closest('#editResourceModal')) { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); colorDot.classList.add('selected'); }
 
-                // RAG dot clicks
                 const ragDot = closest('.rag-dot');
                 if (ragDot) { handleRagSelection(ragDot); }
 
-                // Filter button clicks
                 const filterBtn = closest('.filter-btn');
                 if (filterBtn) {
                     currentRagFilter = filterBtn.dataset.filter;
@@ -566,9 +585,17 @@
             });
             
             document.body.addEventListener('input', e => { if (e.target.id === 'customColorPicker') { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); e.target.classList.add('selected'); } });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const visibleModal = document.querySelector('.modal.visible');
+                    if (visibleModal) {
+                        hideModal(visibleModal.id);
+                    }
+                }
+            });
         }
 
-        // --- RAG System & Filtering Functions ---
         function handleRagSelection(dotElement) {
             const selector = dotElement.parentElement;
             const subtopicKey = selector.dataset.subtopicKey;
@@ -580,7 +607,6 @@
                 ragStatus[subtopicKey] = { status: newStatus, timestamp: new Date().toISOString() };
             }
             saveData();
-            beep(50, 600, 0.05);
 
             const subtopicEl = dotElement.closest('.subtopic');
             const newSubtopicEl = createSubtopicElement( subtopicEl.dataset.subject, subtopicEl.dataset.examBoard, subtopicEl.dataset.paper, subtopicEl.dataset.topic, subtopicEl.dataset.subtopic );
@@ -629,10 +655,62 @@
             });
         }
 
-        // --- View & Modal Management ---
-        function showView(viewName) { Object.values(views).forEach(v => v.classList.add('hidden')); if (views[viewName]) views[viewName].classList.remove('hidden'); if (viewName === 'onboarding') renderOnboardingContent(); if (viewName === 'dashboard') { renderDashboardContent(); startCountdown(); } if (viewName !== 'dashboard') stopCountdown(); }
-        function showModal(modalId) { if(modals[modalId]) modals[modalId].classList.add('visible'); }
-        function hideModal(modalId) { if(modals[modalId]) modals[modalId].classList.remove('visible'); }
+        function showView(viewName) { 
+            Object.values(views).forEach(v => v.classList.add('hidden')); 
+            if (views[viewName]) views[viewName].classList.remove('hidden'); 
+            if (viewName === 'onboarding') renderOnboardingContent(); 
+            if (viewName === 'dashboard') { renderDashboardContent(); startCountdown(); } 
+            if (viewName !== 'dashboard') stopCountdown();
+        }
+        
+        function showModal(modalId) { 
+            const modal = modals[modalId];
+            if(!modal) return;
+
+            lastFocusedElement = document.activeElement;
+            modal.classList.add('visible');
+            modal.addEventListener('keydown', handleFocusTrap);
+
+            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElements.length > 0) {
+                setTimeout(() => focusableElements[0].focus(), 100);
+            }
+        }
+        
+        function hideModal(modalId) { 
+            const modal = modals[modalId];
+            if(!modal) return;
+            
+            modal.classList.remove('visible');
+            modal.removeEventListener('keydown', handleFocusTrap);
+
+            if(lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        function handleFocusTrap(e) {
+            if (e.key !== 'Tab') return;
+            
+            const modal = e.currentTarget;
+            const focusableElements = Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.disabled && el.offsetParent !== null);
+            if(focusableElements.length === 0) return;
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === firstElement) {
+                    lastElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastElement) {
+                    firstElement.focus();
+                    e.preventDefault();
+                }
+            }
+        }
         
         function showSpecView(subject) { 
             currentContext.subject = subject; 
@@ -647,7 +725,6 @@
             showView('spec'); 
         }
 
-        // --- UI Rendering ---
         function renderSpecContent(subject) { 
             const contentEl = document.getElementById('specContent'); 
             const subjectInfo = subjectsData[subject]; 
@@ -700,9 +777,9 @@
                 <div class="subtopic-details">
                     <div class="subtopic-review-info">${formattedDate}</div>
                     <div class="rag-selector" data-subtopic-key="${subtopicKey}">
-                        <div class="rag-dot red ${currentStatus === 'red' ? 'selected' : ''}" data-status="red" title="Not Confident"></div>
-                        <div class="rag-dot amber ${currentStatus === 'amber' ? 'selected' : ''}" data-status="amber" title="Partially Confident"></div>
-                        <div class="rag-dot green ${currentStatus === 'green' ? 'selected' : ''}" data-status="green" title="Fully Confident"></div>
+                        <div class="rag-dot red ${currentStatus === 'red' ? 'selected' : ''}" data-status="red" title="Not Confident"><span class="material-icons check-icon">check</span></div>
+                        <div class="rag-dot amber ${currentStatus === 'amber' ? 'selected' : ''}" data-status="amber" title="Partially Confident"><span class="material-icons check-icon">check</span></div>
+                        <div class="rag-dot green ${currentStatus === 'green' ? 'selected' : ''}" data-status="green" title="Fully Confident"><span class="material-icons check-icon">check</span></div>
                     </div>
                 </div>`;
             return subtopicEl; 
@@ -724,35 +801,82 @@
             return paperEl; 
         }
 
-        // --- Onboarding & Settings ---
         function toggleOnboardingSubject(card) { const subject = card.dataset.subject; const isSelected = card.classList.toggle('selected'); if (isSelected) { if (!selectedSubjects.includes(subject)) selectedSubjects.push(subject); } else { selectedSubjects = selectedSubjects.filter(s => s !== subject); } updateContinueButton(); }
         function toggleSettingsSubject(card) { card.classList.toggle('selected'); updateSaveButtonState(); }
         function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
         function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
         function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
         
-        // --- Resource Management ---
         function showResourcesModal(subject, paper) { Object.assign(currentContext, { subject, paper }); isResourceEditing = false; renderResourcesModal(); showModal('resourcesModal'); }
         function toggleResourceEditMode() { isResourceEditing = !isResourceEditing; renderResourcesModal(); }
         function showEditResourceModal(index = null) { currentContext.resourceIndex = index === null ? null : Number(index); renderEditResourceModal(); showModal('editResourceModal'); }
-        function handleSaveResource() { const title = document.getElementById('resourceTitleInput').value.trim(); let url = document.getElementById('resourceLinkInput').value.trim(); const selectedColorEl = document.querySelector('#resourceColorPicker .selected'); if (!selectedColorEl) { alert('Please select a color.'); return; } const color = selectedColorEl.dataset.color || selectedColorEl.value; if (!title || !url) { alert('Please provide both a title and a URL.'); return; } if (!/^(https?:\/\/)/i.test(url)) { url = 'https://' + url; } const { subject, paper, resourceIndex } = currentContext; const paperKey = `${subject}-${paper}`; if (!paperResources[paperKey]) paperResources[paperKey] = []; const newResource = { title, url, color }; if (resourceIndex !== null) { paperResources[paperKey][resourceIndex] = newResource; } else { paperResources[paperKey].push(newResource); } saveData(); rerenderPaperHeader(subject, paper); renderResourcesModal(); hideModal('editResourceModal'); }
+        
+        function handleSaveResource() { 
+            const errorEl = document.getElementById('resourceFormError');
+            const title = document.getElementById('resourceTitleInput').value.trim(); 
+            let url = document.getElementById('resourceLinkInput').value.trim(); 
+            const selectedColorEl = document.querySelector('#resourceColorPicker .selected'); 
+            
+            if (!title || !url) { 
+                errorEl.textContent = 'Please provide both a title and a URL.';
+                errorEl.style.display = 'block';
+                return; 
+            } 
+            if (!selectedColorEl) {
+                errorEl.textContent = 'Please select a color tag for the resource.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            errorEl.style.display = 'none';
+            const color = selectedColorEl.dataset.color || selectedColorEl.value; 
+            if (!/^(https?:\/\/)/i.test(url)) { url = 'https://' + url; } 
+            
+            const { subject, paper, resourceIndex } = currentContext; 
+            const paperKey = `${subject}-${paper}`; 
+            if (!paperResources[paperKey]) paperResources[paperKey] = []; 
+            const newResource = { title, url, color }; 
+            
+            if (resourceIndex !== null) { 
+                paperResources[paperKey][resourceIndex] = newResource; 
+            } else { 
+                paperResources[paperKey].push(newResource); 
+            } 
+            
+            saveData(); 
+            rerenderPaperHeader(subject, paper); 
+            renderResourcesModal(); 
+            hideModal('editResourceModal'); 
+        }
+
         function handleDeleteResource(index) { if (confirm('Are you sure you want to delete this resource?')) { const { subject, paper } = currentContext; paperResources[`${subject}-${paper}`].splice(index, 1); saveData(); rerenderPaperHeader(subject, paper); renderResourcesModal(); } }
         
-        // --- Utility & Helper Functions ---
-        function beep(duration = 150, frequency = 440, volume = 0.1) { try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); g.gain.value = volume; o.frequency.value = frequency; o.type = 'sine'; o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime + duration / 1000); } catch (e) { console.error("Web Audio API is not supported."); } }
         function startCountdown() { const el=document.getElementById('countdownTimer');const d=new Date('2026-05-14T09:00:00');function t(){const o=d-new Date;if(o<=0){el.innerHTML="<h2>Exams Started!</h2>";stopCountdown();return}const e=Math.floor(o/864e5),n=Math.floor(o%864e5/36e5),a=Math.floor(o%36e5/6e4),i=Math.floor(o%6e4/1e3);el.innerHTML=`<div class="countdown-item"><span class="value">${e}</span><span class="label">Days</span></div><div class="countdown-item"><span class="value">${n}</span><span class="label">Hours</span></div><div class="countdown-item"><span class="value">${a}</span><span class="label">Minutes</span></div><div class="countdown-item"><span class="value">${i}</span><span class="label">Seconds</span></div>`}stopCountdown();t();countdownInterval=setInterval(t,1e3)}
         function stopCountdown() { clearInterval(countdownInterval); }
         function rerenderPaperHeader(subject, paper) { const el = document.querySelector(`.paper-header[data-paper-key="${subject}-${paper}"]`); if(el) { const newHeader = createPaperHeaderElement(subject, paper); el.parentNode.replaceChild(newHeader, el); updatePaperCompletionPercentages(); } }
         function getContrastYIQ(hexcolor){ hexcolor = hexcolor.replace("#", ""); const r = parseInt(hexcolor.substr(0,2),16), g = parseInt(hexcolor.substr(2,2),16), b = parseInt(hexcolor.substr(4,2),16); const yiq = ((r*299)+(g*587)+(b*114))/1000; return (yiq >= 128) ? 'dark' : 'light'; }
         
-        // --- Initial Render Functions ---
         function renderOnboardingContent() { const grid = document.getElementById('onboardingSubjectGrid'); if (!grid) return; grid.innerHTML = ''; Object.keys(subjectsData).forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; if (selectedSubjects.includes(subject)) card.classList.add('selected'); card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); updateContinueButton(); }
         function renderDashboardContent() { const grid = document.getElementById('dashboardSubjectGrid'); if (!grid) return; grid.innerHTML = ''; selectedSubjects.forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); }
         function renderSettingsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
-        function renderResourcesModal() { const { subject, paper } = currentContext; const paperKey = `${subject}-${paper}`; const resources = paperResources[paperKey] || []; const listEl = document.getElementById('resourcesList'); const editBtn = document.getElementById('editResourcesBtn'); const addBtn = document.getElementById('addNewResourceBtn'); document.getElementById('resourcesModalTitle').textContent = `Resources for ${paper}`; if (isResourceEditing) { editBtn.innerHTML = `<span class="material-icons">done</span>Done`; addBtn.style.display = 'none'; listEl.classList.add('editing'); } else { editBtn.innerHTML = `<span class="material-icons">edit</span>Edit`; addBtn.style.display = 'inline-flex'; listEl.classList.remove('editing'); } editBtn.disabled = resources.length === 0; let resourcesHTML = resources.length ? resources.map((res, i) => { const textClass = `text-${getContrastYIQ(res.color)}`; const safeUrl = /^(https?:\/\/)/i.test(res.url) ? res.url : 'https://' + res.url; return ` <div class="resource-item ${textClass}" data-index="${i}" style="background-color:${res.color};"> <span class="resource-title">${res.title}</span> <div class="resource-actions"> <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="resource-redirect-btn" title="Open Link"> <span class="material-icons">launch</span> </a> <button class="resource-delete-btn" data-index="${i}" title="Delete Resource"> <span class="material-icons">delete</span> </button> </div> </div>`.trim() }).join('') : '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-7) 0;">No resources added yet.</p>'; if (isResourceEditing && resources.length > 0) { resourcesHTML = `<p class="edit-mode-notice">✨ <b>Editing Mode</b> &mdash; Tap a resource to modify.</p>` + resourcesHTML; } listEl.innerHTML = resourcesHTML; }
-        function renderEditResourceModal() { const { subject, paper, resourceIndex } = currentContext; const paperKey = `${subject}-${paper}`; const resource = resourceIndex !== null ? (paperResources[paperKey] || [])[resourceIndex] : null; document.getElementById('editResourceModalTitle').textContent = resource ? 'Edit Resource' : 'Add New Resource'; document.getElementById('resourceTitleInput').value = resource ? resource.title : ''; document.getElementById('resourceLinkInput').value = resource ? resource.url : ''; document.getElementById('deleteResourceBtn').style.display = resource ? 'inline-flex' : 'none'; const defaultColors = ['#FF453A', '#FF9F0A', '#30D158', '#0A84FF', '#5E5CE6', '#AF52DE']; const colorPicker = document.getElementById('resourceColorPicker'); let resourceColor = resource ? resource.color : '#5E5CE6'; let isDefaultColor = defaultColors.includes(resourceColor); colorPicker.innerHTML = ` ${defaultColors.map(c => `<div class="color-dot ${resourceColor === c ? 'selected' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('')} <input type="color" id="customColorPicker" class="${!isDefaultColor ? 'selected' : ''}" value="${isDefaultColor ? '#5E5CE6' : resourceColor}" title="Custom Color"> `; }
+        function renderResourcesModal() { const { subject, paper } = currentContext; const paperKey = `${subject}-${paper}`; const resources = paperResources[paperKey] || []; const listEl = document.getElementById('resourcesList'); const editBtn = document.getElementById('editResourcesBtn'); const addBtn = document.getElementById('addNewResourceBtn'); document.getElementById('resourcesModalTitle').textContent = `Resources for ${paper}`; if (isResourceEditing) { editBtn.innerHTML = `<span class="material-icons">done</span>Done`; addBtn.style.display = 'none'; listEl.classList.add('editing'); } else { editBtn.innerHTML = `<span class="material-icons">edit</span>Edit`; addBtn.style.display = 'inline-flex'; listEl.classList.remove('editing'); } editBtn.disabled = resources.length === 0; let resourcesHTML = resources.length ? resources.map((res, i) => { const textClass = `text-${getContrastYIQ(res.color)}`; const safeUrl = /^(https?:\/\/)/i.test(res.url) ? res.url : 'https://' + res.url; return ` <div class="resource-item ${textClass}" data-index="${i}" style="background-color:${res.color};"> <span class="resource-title">${res.title}</span> <div class="resource-actions"> <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="resource-redirect-btn" title="Open Link"> <span class="material-icons">launch</span> </a> <button class="resource-delete-btn" data-index="${i}" title="Delete Resource"> <span class="material-icons">delete</span> </button> </div> </div>`.trim() }).join('') : '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-7) 0;">No resources added yet.</p>'; if (isResourceEditing && resources.length > 0) { resourcesHTML = `<p class="edit-mode-notice">✨ <b>Editing Mode</b> — Tap a resource to modify.</p>` + resourcesHTML; } listEl.innerHTML = resourcesHTML; }
+        function renderEditResourceModal() {
+            const { subject, paper, resourceIndex } = currentContext;
+            const paperKey = `${subject}-${paper}`;
+            const resource = resourceIndex !== null ? (paperResources[paperKey] || [])[resourceIndex] : null;
+            document.getElementById('editResourceModalTitle').textContent = resource ? 'Edit Resource' : 'Add New Resource';
+            document.getElementById('resourceTitleInput').value = resource ? resource.title : '';
+            document.getElementById('resourceLinkInput').value = resource ? resource.url : '';
+            document.getElementById('deleteResourceBtn').style.display = resource ? 'inline-flex' : 'none';
+            document.getElementById('resourceFormError').style.display = 'none';
+            // UPDATED: Consistent colors with new RAG palette
+            const defaultColors = ['#EF4444', '#D97706', '#059669', '#3B82F6', '#6366F1', '#8B5CF6'];
+            const colorPicker = document.getElementById('resourceColorPicker');
+            let resourceColor = resource ? resource.color : '#6366F1'; // Default to indigo
+            let isDefaultColor = defaultColors.includes(resourceColor);
+            colorPicker.innerHTML = ` ${defaultColors.map(c => `<div class="color-dot ${resourceColor === c ? 'selected' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('')} <input type="color" id="customColorPicker" class="${!isDefaultColor ? 'selected' : ''}" value="${isDefaultColor ? '#6366F1' : resourceColor}" title="Custom Color"> `;
+        }
         
     </script>
 </body>
 </html>
-
