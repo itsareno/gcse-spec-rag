@@ -126,10 +126,11 @@
         .subject-card h3 { font-size: var(--font-size-md); font-weight: 600; color: var(--color-text-primary); pointer-events: none; }
         .subject-card.selected h3 { color: var(--color-accent); }
         .exam-board-pill {
-            font-size: var(--font-size-xs); font-weight: 600; padding: var(--space-1) var(--space-3);
+            font-weight: 600; padding: var(--space-1) var(--space-3);
             border-radius: var(--radius-full); background-color: var(--color-background);
             color: var(--color-text-secondary); border: 1px solid var(--color-outline);
             text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+            font-size: clamp(0.6rem, 1.5vw, 0.75rem);
         }
         
         /* Spec View Header */
@@ -137,13 +138,20 @@
             position: sticky; top: 0; background-color: rgba(13, 13, 13, 0.8);
             backdrop-filter: blur(12px); z-index: 101; border-bottom: 1px solid var(--color-outline);
             margin-bottom: var(--space-7); padding: var(--space-4) var(--space-6);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller desktop screens */
+            justify-content: space-between; /* Key for desktop layout */
         }
-        .spec-header-main { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
-        .spec-header h1 { font-size: var(--font-size-xl); font-weight: 700; margin-right: auto; display: flex; align-items: center; gap: var(--space-3); flex-shrink: 1; min-width: 0; }
-        .spec-header h1 span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .spec-header-main { display: flex; align-items: center; gap: var(--space-4); }
+        .spec-header h1 {
+            font-weight: 700; display: flex; align-items: center;
+            gap: var(--space-3); flex-shrink: 1; min-width: 0;
+            font-size: clamp(1.25rem, 3.5vw, var(--font-size-xl));
+        }
         
         /* Summary Bar Filter */
-        .spec-summary-bar { display: flex; gap: var(--space-2); margin-left: auto; }
+        .spec-summary-bar { display: flex; gap: var(--space-2); }
         .summary-item {
             display: flex; align-items: center; gap: var(--space-2);
             background-color: var(--color-surface); border: 1px solid var(--color-outline);
@@ -169,8 +177,6 @@
         .md-button .material-icons { font-size: var(--font-size-lg); }
         .md-button.text { background: transparent; color: var(--color-text-primary); border-color: var(--color-outline); }
         .md-button.text:hover { background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); }
-        .md-button.text.destructive { color: var(--rag-red); border-color: var(--color-outline); }
-        .md-button.text.destructive:hover { border-color: var(--rag-red); background-color: rgba(239, 68, 68, 0.1); }
         .dashboard-footer { text-align: center; margin-top: var(--space-7); }
         .dashboard-divider { display: flex; align-items: center; text-align: center; margin: var(--space-7) 0; color: var(--color-text-secondary); }
         .dashboard-divider::before, .dashboard-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--color-outline); }
@@ -181,8 +187,6 @@
         /* Specification Content */
         .paper-section { background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-xl); margin-bottom: var(--space-7); overflow: hidden; }
         .paper-header { padding: var(--space-5) var(--space-6); font-size: var(--font-size-lg); font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
-        .paper-header-title { display: flex; align-items: center; gap: var(--space-3); flex-grow: 1; }
-        .paper-completion-pill { font-size: var(--font-size-xs); font-weight: 600; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); background-color: var(--color-background); color: var(--color-text-secondary); border: 1px solid var(--color-outline); white-space: nowrap; }
         .topic { border-top: 1px solid var(--color-outline); }
         .topic-header { padding: var(--space-3) var(--space-6); background-color: var(--color-background); }
         .topic-header-content { font-weight: 600; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
@@ -197,8 +201,8 @@
             border-radius: var(--radius-full); overflow: hidden; margin-top: var(--space-2);
         }
         .topic-progress-fill {
-            width: 0%; height: 100%; background-color: var(--rag-green);
-            transition: width 0.5s var(--easing);
+            width: 0%; height: 100%;
+            transition: width 0.5s var(--easing), background 0.5s var(--easing);
         }
 
         /* Timestamp Tooltip */
@@ -233,14 +237,21 @@
         .rag-dot.red { background-color: var(--rag-red); --shadow-color: var(--rag-red); }
         .rag-dot.amber { background-color: var(--rag-amber); --shadow-color: var(--rag-amber); }
         .rag-dot.green { background-color: var(--rag-green); --shadow-color: var(--rag-green); }
-        .subtopic.filtered-out, .topic.filtered-out { display: none; }
+        
+        /* Filtered out items */
+        .subtopic.filtered-out, .topic.filtered-out, .paper-section.filtered-out { display: none; }
+
+        /* No Results Message */
+        #noResultsMessage {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--color-text-secondary);
+        }
 
         /* Desktop-only styles */
         @media (min-width: 769px) {
             .subject-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
             #onboarding .subject-card, #settingsModal .subject-card { flex-direction: column; justify-content: center; text-align: center; gap: var(--space-3); }
-            .spec-header-main { flex-wrap: nowrap; }
-            .spec-header h1 { font-size: var(--font-size-xxl); }
         }
 
         /* Mobile-only styles and refined sizing */
@@ -261,10 +272,33 @@
             .countdown-item .value { font-size: var(--font-size-xl); }
             .countdown-item .label { font-size: 10px; margin-top: var(--space-1); }
 
-            .spec-header { padding: var(--space-3) var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
-            .spec-header-main { justify-content: space-between; gap: var(--space-3); }
-            .spec-header h1 { font-size: var(--font-size-lg); margin: 0; }
-            .spec-summary-bar { justify-content: center; flex-wrap: wrap; margin-left: 0; }
+            /* REFINED Mobile Header Layout */
+            .spec-header {
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-3);
+                padding: var(--space-3) var(--space-4);
+            }
+            .spec-header-main {
+                position: relative;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #backToDashBtn {
+                position: absolute;
+                left: 0;
+            }
+            .spec-header h1 { 
+                font-size: var(--font-size-lg); 
+                text-align: center;
+            }
+            .spec-summary-bar { 
+                justify-content: center; 
+                flex-wrap: wrap; 
+                margin-left: 0; 
+            }
             
             .paper-section { border-radius: var(--radius-lg); }
             .paper-header { padding: var(--space-4); font-size: var(--font-size-md); }
@@ -318,10 +352,13 @@
                         <span class="material-icons">arrow_back</span>
                     </button>
                     <h1 id="specSubjectTitle"></h1>
-                    <div class="spec-summary-bar" id="specSummaryBar"></div>
                 </div>
+                <div class="spec-summary-bar" id="specSummaryBar"></div>
             </div>
             <div id="specContent"></div>
+            <div id="noResultsMessage" class="hidden">
+                <p>No topics match the current filter.</p>
+            </div>
         </div>
     </div>
 
@@ -443,7 +480,6 @@
                 subtopicEl.parentNode.replaceChild(newSubtopicEl, subtopicEl);
             }
             
-            updatePaperCompletionPercentages();
             updateAllTopicProgress();
             renderSummaryBar();
             applyRagFilter();
@@ -468,26 +504,20 @@
                 });
                 topic.classList.toggle('filtered-out', !hasVisibleSubtopic);
             });
+
+            const paperSections = document.querySelectorAll('#specContent .paper-section');
+            paperSections.forEach(paper => {
+                const hasVisibleTopic = paper.querySelector('.topic:not(.filtered-out)');
+                paper.classList.toggle('filtered-out', !hasVisibleTopic);
+            });
+
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const hasVisibleContent = document.querySelector('#specContent .paper-section:not(.filtered-out)');
+            if (noResultsMessage) {
+                noResultsMessage.classList.toggle('hidden', hasVisibleContent);
+            }
         }
         
-        function updatePaperCompletionPercentages() {
-            document.querySelectorAll('.paper-section').forEach(paperSection => {
-                const subtopics = paperSection.querySelectorAll('.subtopic');
-                const totalSubtopics = subtopics.length;
-                if (totalSubtopics === 0) return;
-
-                let ratedCount = 0;
-                subtopics.forEach(subtopic => {
-                    const subtopicKey = subtopic.querySelector('.rag-selector').dataset.subtopicKey;
-                    if (ragStatus[subtopicKey]) ratedCount++;
-                });
-
-                const percentage = totalSubtopics > 0 ? Math.round((ratedCount / totalSubtopics) * 100) : 0;
-                const pill = paperSection.querySelector('.paper-completion-pill');
-                if(pill) pill.textContent = `${percentage}% Reviewed`;
-            });
-        }
-
         function showView(viewName) { 
             Object.values(views).forEach(v => v.classList.add('hidden')); 
             if (views[viewName]) views[viewName].classList.remove('hidden'); 
@@ -527,9 +557,7 @@
         
         function showSpecView(subject) { 
             currentContext.subject = subject; 
-            const subjectInfo = subjectsData[subject];
-            const examBoard = Object.keys(subjectInfo.specifications)[0];
-            document.getElementById('specSubjectTitle').innerHTML = `<span>${subject}</span><span class="exam-board-pill">${examBoard}</span>`; 
+            document.getElementById('specSubjectTitle').innerHTML = `<span>${subject}</span>`;
             
             currentRagFilter = 'all';
             renderSpecContent(subject); 
@@ -562,7 +590,6 @@
                 }); 
                 contentEl.appendChild(paperEl); 
             }); 
-            updatePaperCompletionPercentages();
             updateAllTopicProgress();
             renderSummaryBar();
             applyRagFilter();
@@ -600,11 +627,7 @@
             const paperEl = document.createElement('div'); 
             paperEl.className = 'paper-header'; 
             paperEl.dataset.paperKey = `${subject}-${paper}`; 
-            paperEl.innerHTML = `
-                <div class="paper-header-title">
-                    <span>${paper}</span>
-                    <span class="paper-completion-pill">0% Reviewed</span>
-                </div>`; 
+            paperEl.innerHTML = `<span>${paper}</span>`; 
             return paperEl; 
         }
 
@@ -614,17 +637,44 @@
                 const totalSubtopics = subtopics.length;
                 if (totalSubtopics === 0) return;
 
+                let score = 0;
+                let amberCount = 0;
                 let greenCount = 0;
                 subtopics.forEach(st => {
                     const key = st.querySelector('.rag-selector').dataset.subtopicKey;
-                    if (ragStatus[key]?.status === 'green') {
+                    const status = ragStatus[key]?.status;
+                    if (status === 'green') {
+                        score += 2;
                         greenCount++;
+                    } else if (status === 'amber') {
+                        score += 1;
+                        amberCount++;
                     }
                 });
                 
-                const percentage = totalSubtopics > 0 ? (greenCount / totalSubtopics) * 100 : 0;
+                const maxScore = totalSubtopics * 2;
+                const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
                 const fillEl = topicEl.querySelector('.topic-progress-fill');
-                if (fillEl) fillEl.style.width = `${percentage}%`;
+                
+                if (fillEl) {
+                    fillEl.style.width = `${percentage}%`;
+                    
+                    let gradientStyle;
+                    const totalRatedCount = amberCount + greenCount;
+
+                    if (greenCount > 0 && amberCount === 0) {
+                        gradientStyle = 'var(--rag-green)';
+                    } else if (greenCount === 0 && amberCount > 0) {
+                        gradientStyle = 'var(--rag-amber)';
+                    } else if (totalRatedCount > 0) {
+                        const amberRatio = amberCount / totalRatedCount;
+                        const amberStopPercentage = amberRatio * 100;
+                        gradientStyle = `linear-gradient(to right, var(--rag-amber), var(--rag-amber) ${amberStopPercentage}%, var(--rag-green) ${amberStopPercentage}%)`;
+                    } else {
+                        gradientStyle = 'var(--rag-green)';
+                    }
+                    fillEl.style.background = gradientStyle;
+                }
             });
         }
 
@@ -654,7 +704,7 @@
         function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
         function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
         function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
-                
+                        
         function startCountdown() { const el=document.getElementById('countdownTimer');const d=new Date('2026-05-14T09:00:00');function t(){const o=d-new Date;if(o<=0){el.innerHTML="<h2>Exams Started!</h2>";stopCountdown();return}const e=Math.floor(o/864e5),n=Math.floor(o%864e5/36e5),a=Math.floor(o%36e5/6e4),i=Math.floor(o%6e4/1e3);el.innerHTML=`<div class="countdown-item"><span class="value">${e}</span><span class="label">Days</span></div><div class="countdown-item"><span class="value">${n}</span><span class="label">Hours</span></div><div class="countdown-item"><span class="value">${a}</span><span class="label">Minutes</span></div><div class="countdown-item"><span class="value">${i}</span><span class="label">Seconds</span></div>`}stopCountdown();t();countdownInterval=setInterval(t,1e3)}
         function stopCountdown() { clearInterval(countdownInterval); }
         
