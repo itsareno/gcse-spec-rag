@@ -70,6 +70,9 @@
 
         /* Main Views */
         .onboarding, .main-dashboard, .spec-view { animation: slideUpFadeIn 0.6s var(--easing) both; }
+        .main-dashboard .container, .spec-view .container {
+             padding-bottom: 80px; /* Increased padding to ensure full scroll */
+        }
 
         /* Modal Base Styles */
         .modal { 
@@ -135,6 +138,8 @@
             justify-content: center;
             min-height: 100vh;
             padding: var(--space-4);
+            padding-bottom: 80px; /* Add padding to prevent cut-off */
+            overflow-y: auto; /* Ensure scrollability if content is too tall */
         }
         .onboarding-card {
             background: var(--color-surface);
@@ -308,16 +313,20 @@
             .countdown-item .label { font-size: 10px; margin-top: var(--space-1); }
 
             .spec-header {
-                display: grid;
-                grid-template-areas:
-                    "back title filters";
-                grid-template-columns: auto 1fr auto;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
                 gap: var(--space-3);
                 padding: var(--space-3) var(--space-4);
+            }
+            .spec-header-row-1 {
+                display: flex;
                 align-items: center;
+                justify-content: space-between;
+                gap: var(--space-2);
             }
             .spec-header #backToDashBtn {
-                grid-area: back;
+                flex-shrink: 0;
                 width: 40px;
                 height: 40px;
                 padding: 0;
@@ -326,16 +335,19 @@
                 font-size: var(--font-size-lg);
             }
             .spec-header h1 {
-                grid-area: title;
+                flex-grow: 1;
                 font-size: var(--font-size-lg);
                 text-align: center;
                 margin: 0;
                 padding: 0;
             }
             .spec-header .filter-controls {
-                grid-area: filters;
-                justify-self: end;
+                align-self: center;
                 margin-left: 0;
+            }
+            .filter-btn {
+                padding: var(--space-1) var(--space-3);
+                font-size: var(--font-size-xs);
             }
 
             .paper-header { padding: var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
@@ -385,10 +397,13 @@
     <div id="spec-view" class="spec-view hidden">
         <div class="container">
             <div class="spec-header">
-                <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
-                    <span class="material-icons">arrow_back</span>
-                </button>
-                <h1 id="specSubjectTitle"></h1>
+                <div class="spec-header-row-1">
+                    <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <h1 id="specSubjectTitle"></h1>
+                    <div style="width: 40px;"></div> <!-- Spacer to balance back button -->
+                </div>
                 <div class="filter-controls">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn red" data-filter="red" title="Filter by Red">R</button>
