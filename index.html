@@ -25,7 +25,7 @@
             --color-accent: #FFFFFF;
             --color-accent-text: #000000;
             
-            /* UPDATED: RAG Palette for high contrast */
+            /* RAG Palette for high contrast */
             --rag-red: #EF4444;
             --rag-amber: #D97706;
             --rag-green: #059669;
@@ -73,77 +73,34 @@
 
         /* Modal Base Styles */
         .modal { 
-            display: flex; 
-            position: fixed; 
-            inset: 0;
-            padding: var(--space-4); 
-            z-index: 1000; 
-            align-items: center; 
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.7); 
-            backdrop-filter: blur(12px); 
-            opacity: 0;
-            visibility: hidden;
+            display: flex; position: fixed; inset: 0; padding: var(--space-4); z-index: 1000; 
+            align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(12px); opacity: 0; visibility: hidden;
             transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
         }
         .modal.visible { opacity: 1; visibility: visible; }
         .modal-content {
-            background: var(--color-surface);
-            border-radius: var(--radius-xl); 
-            width: 100%; 
-            max-width: 560px;
-            border: 1px solid var(--color-outline);
-            display: flex;
-            flex-direction: column;
-            max-height: 90vh;
-            transform: scale(0.95);
-            transition: transform var(--transition-speed) var(--easing);
+            background: var(--color-surface); border-radius: var(--radius-xl); width: 100%; max-width: 560px;
+            border: 1px solid var(--color-outline); display: flex; flex-direction: column; max-height: 90vh;
+            transform: scale(0.95); transition: transform var(--transition-speed) var(--easing);
         }
         .modal.visible .modal-content { transform: scale(1); }
         .modal-header {
-            padding: var(--space-5) var(--space-6);
-            border-bottom: 1px solid var(--color-outline);
-            flex-shrink: 0;
+            padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--color-outline); flex-shrink: 0;
         }
-        .modal-header h2 {
-            font-size: var(--font-size-lg);
-            font-weight: 700;
-            text-align: center;
-        }
-        .modal-body {
-            padding: var(--space-6);
-            flex-grow: 1; 
-            overflow-y: auto;
-        }
+        .modal-header h2 { font-size: var(--font-size-lg); font-weight: 700; text-align: center; }
+        .modal-body { padding: var(--space-6); flex-grow: 1; overflow-y: auto; }
         .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: var(--space-3);
-            padding: var(--space-4) var(--space-6);
-            border-top: 1px solid var(--color-outline);
-            background-color: var(--color-surface);
-            border-bottom-left-radius: var(--radius-xl);
-            border-bottom-right-radius: var(--radius-xl);
-            flex-shrink: 0;
+            display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--color-outline); background-color: var(--color-surface);
+            border-bottom-left-radius: var(--radius-xl); border-bottom-right-radius: var(--radius-xl); flex-shrink: 0;
         }
-        .modal-footer .md-button.text.destructive { margin-right: auto; }
 
         /* Onboarding Screen */
-        .onboarding {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: var(--space-4);
-        }
+        .onboarding { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: var(--space-4); }
         .onboarding-card {
-            background: var(--color-surface);
-            border-radius: var(--radius-xl); 
-            padding: var(--space-8); 
-            width: 100%; 
-            max-width: 720px;
-            border: 1px solid var(--color-outline);
-            text-align: center;
+            background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-8); width: 100%; 
+            max-width: 720px; border: 1px solid var(--color-outline); text-align: center;
         }
         .onboarding-card h1 { font-size: var(--font-size-xxl); font-weight: 700; margin-bottom: var(--space-2); }
         .onboarding-card p { color: var(--color-text-secondary); font-size: var(--font-size-md); margin-bottom: var(--space-7); max-width: 450px; margin-left: auto; margin-right: auto;}
@@ -160,51 +117,50 @@
         /* Subject Grid */
         .subject-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
         .subject-card { 
-            border-radius: var(--radius-lg); 
-            padding: var(--space-5); 
-            cursor: pointer; 
-            transition: all var(--transition-speed) var(--easing); 
-            border: 1px solid var(--color-outline); 
-            background-color: var(--color-surface);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border-radius: var(--radius-lg); padding: var(--space-5); cursor: pointer; 
+            transition: all var(--transition-speed) var(--easing); border: 1px solid var(--color-outline); 
+            background-color: var(--color-surface); display: flex; align-items: center; justify-content: space-between;
         }
         .subject-card:hover { transform: translateY(-4px); border-color: var(--color-outline-hover); background-color: var(--color-surface-hover); }
         .subject-card.selected { border-color: var(--color-accent); background-color: var(--color-surface); }
         .subject-card h3 { font-size: var(--font-size-md); font-weight: 600; color: var(--color-text-primary); pointer-events: none; }
         .subject-card.selected h3 { color: var(--color-accent); }
         .exam-board-pill {
-            font-size: var(--font-size-xs);
-            font-weight: 600;
-            padding: var(--space-1) var(--space-3);
-            border-radius: var(--radius-full);
-            background-color: var(--color-background);
-            color: var(--color-text-secondary);
-            border: 1px solid var(--color-outline);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            flex-shrink: 0;
+            font-size: var(--font-size-xs); font-weight: 600; padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full); background-color: var(--color-background);
+            color: var(--color-text-secondary); border: 1px solid var(--color-outline);
+            text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
         }
         
         /* Spec View Header */
         .spec-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: var(--space-4);
-            padding: var(--space-3) var(--space-6);
-            position: sticky;
-            top: 0;
-            background-color: rgba(13, 13, 13, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 101;
-            border-bottom: 1px solid var(--color-outline);
-            margin-bottom: var(--space-7);
+            position: sticky; top: 0; background-color: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(12px); z-index: 101; border-bottom: 1px solid var(--color-outline);
+            margin-bottom: var(--space-7); padding: var(--space-4) var(--space-6);
         }
+        .spec-header-main { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
         .spec-header h1 { font-size: var(--font-size-xl); font-weight: 700; margin-right: auto; display: flex; align-items: center; gap: var(--space-3); flex-shrink: 1; min-width: 0; }
         .spec-header h1 span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
+        /* Summary Bar Filter */
+        .spec-summary-bar { display: flex; gap: var(--space-2); margin-left: auto; }
+        .summary-item {
+            display: flex; align-items: center; gap: var(--space-2);
+            background-color: var(--color-surface); border: 1px solid var(--color-outline);
+            padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+            font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text-secondary);
+            cursor: pointer; transition: all var(--transition-speed) ease;
+        }
+        .summary-item:hover { background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); color: var(--color-text-primary); }
+        .summary-item.active {
+            border-color: var(--color-accent);
+            color: var(--color-text-primary);
+        }
+        .summary-item .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .summary-item .dot.red { background-color: var(--rag-red); }
+        .summary-item .dot.amber { background-color: var(--rag-amber); }
+        .summary-item .dot.green { background-color: var(--rag-green); }
+
         /* Buttons */
         .md-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--color-accent); background: var(--color-accent); color: var(--color-accent-text); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-speed) var(--easing); text-decoration: none; }
         .md-button:hover { transform: scale(1.03); }
@@ -228,51 +184,48 @@
         .paper-header-title { display: flex; align-items: center; gap: var(--space-3); flex-grow: 1; }
         .paper-completion-pill { font-size: var(--font-size-xs); font-weight: 600; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); background-color: var(--color-background); color: var(--color-text-secondary); border: 1px solid var(--color-outline); white-space: nowrap; }
         .topic { border-top: 1px solid var(--color-outline); }
-        .topic-header { padding: var(--space-3) var(--space-6); font-weight: 600; font-size: var(--font-size-sm); color: var(--color-text-secondary); background-color: var(--color-background); }
+        .topic-header { padding: var(--space-3) var(--space-6); background-color: var(--color-background); }
+        .topic-header-content { font-weight: 600; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
         .subtopic { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-outline); transition: background-color var(--transition-speed) ease; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
         .subtopic:hover { background-color: var(--color-surface-hover); }
         .subtopic-title { font-size: var(--font-size-sm); flex-grow: 1; padding-right: var(--space-4); }
-        .subtopic-details { display: flex; align-items: center; gap: var(--space-5); flex-shrink: 0; }
-        .subtopic-review-info { font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right; white-space: nowrap; }
-        .paper-resources-btn { background-color: var(--color-surface); border: 1px solid var(--color-outline); color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); transition: all var(--transition-speed) ease; }
-        .paper-resources-btn:hover { color: var(--color-text-primary); background-color: var(--color-surface-hover); border-color: var(--color-outline-hover); }
-        .paper-resources-btn.has-resources { color: var(--color-accent); border-color: var(--color-accent); }
-        .paper-resources-btn .material-icons { font-size: var(--font-size-lg); }
+        .subtopic-details { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; position: relative; }
+        
+        /* Topic Progress Bar */
+        .topic-progress-bar {
+            width: 100%; background-color: var(--color-outline); height: 4px;
+            border-radius: var(--radius-full); overflow: hidden; margin-top: var(--space-2);
+        }
+        .topic-progress-fill {
+            width: 0%; height: 100%; background-color: var(--rag-green);
+            transition: width 0.5s var(--easing);
+        }
 
-        /* RAG System & Filter Styles */
-        .filter-controls { display: flex; gap: var(--space-2); background-color: var(--color-surface); padding: var(--space-1); border-radius: var(--radius-md); border: 1px solid var(--color-outline); margin-left: auto; }
-        .filter-btn { background: transparent; border: none; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 600; padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-speed) var(--easing); }
-        .filter-btn:hover { color: var(--color-text-primary); background-color: var(--color-surface-hover); }
-        .filter-btn.active { background-color: var(--color-accent); color: var(--color-accent-text); }
-        .filter-btn.red.active { background-color: var(--rag-red); color: white; }
-        .filter-btn.amber.active { background-color: var(--rag-amber); color: white; }
-        .filter-btn.green.active { background-color: var(--rag-green); color: white; }
+        /* Timestamp Tooltip */
+        .review-timestamp-tooltip {
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            margin-bottom: var(--space-3); background-color: var(--color-surface-hover);
+            color: var(--color-text-primary); padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md); font-size: var(--font-size-xs); font-weight: 500;
+            white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity var(--transition-speed) ease, margin-bottom var(--transition-speed) ease;
+        }
+        .subtopic-details:hover .review-timestamp-tooltip {
+            opacity: 1; visibility: visible; margin-bottom: var(--space-2);
+        }
         
         /* RAG dot styling */
-        .rag-selector { display: flex; gap: var(--space-2); flex-shrink: 0; }
+        .rag-selector { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
         .rag-dot {
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all var(--transition-speed) var(--easing);
-            opacity: 0.6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: all var(--transition-speed) var(--easing);
+            opacity: 0.6; display: flex; align-items: center; justify-content: center;
         }
         .rag-dot:hover { opacity: 1; transform: scale(1.1); }
-        .rag-dot .check-icon {
-            display: none;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--color-text-primary); /* REFINED: White check on all */
-        }
+        .rag-dot .check-icon { display: none; font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
         
         .rag-dot.selected {
-            opacity: 1;
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.4);
+            opacity: 1; transform: scale(1.1); border-color: rgba(255, 255, 255, 0.4);
             box-shadow: 0 0 16px -2px var(--shadow-color);
         }
         .rag-dot.selected .check-icon { display: block; }
@@ -282,54 +235,11 @@
         .rag-dot.green { background-color: var(--rag-green); --shadow-color: var(--rag-green); }
         .subtopic.filtered-out, .topic.filtered-out { display: none; }
 
-        /* Forms */
-        .form-group { margin-bottom: var(--space-4); }
-        .form-group label { display: block; font-size: var(--font-size-sm); font-weight: 500; margin-bottom: var(--space-2); }
-        .form-input { width: 100%; background: var(--color-background); border: 1px solid var(--color-outline); border-radius: var(--radius-md); padding: var(--space-3); color: var(--color-text-primary); font-size: var(--font-size-md); transition: border-color var(--transition-speed) ease; }
-        .form-input:focus { outline: none; border-color: var(--color-accent); }
-        .color-picker { display: flex; gap: var(--space-3); justify-content: flex-start; align-items: center; }
-        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid var(--color-outline); transition: all var(--transition-speed) ease; }
-        .color-dot.selected { border-color: var(--color-accent); transform: scale(1.1); }
-        input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 36px; height: 36px; background-color: transparent; border: none; cursor: pointer; border-radius: 50%; overflow: hidden; }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: 2px solid var(--color-outline); border-radius: 50%; }
-        input[type="color"].selected::-webkit-color-swatch { border-color: var(--color-accent); }
-        
-        .form-error-message {
-            display: none;
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--rag-red);
-            border: 1px solid var(--rag-red);
-            padding: var(--space-3) var(--space-4);
-            border-radius: var(--radius-md);
-            margin-top: var(--space-4);
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-        }
-
-        /* Resource Item Styling */
-        #resourcesList.editing .resource-item { cursor: pointer; }
-        #resourcesList.editing .resource-item:hover { transform: scale(1.02); background-color: var(--color-surface-hover); }
-        .edit-mode-notice { text-align: center; padding: var(--space-2) var(--space-4); margin-bottom: var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-secondary); background-color: var(--color-background); border-radius: var(--radius-md); }
-        .resource-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-lg); transition: transform var(--transition-speed) var(--easing), background-color var(--transition-speed) ease; }
-        .resource-item + .resource-item { margin-top: var(--space-3); }
-        .resource-item.text-light { color: #FFFFFF; }
-        .resource-item.text-dark { color: #000000; }
-        .resource-title { flex-grow: 1; font-weight: 600; font-size: var(--font-size-md); }
-        .resource-actions { display: flex; align-items: center; }
-        .resource-actions a, .resource-actions button { background: rgba(255,255,255,0.1); border: none; cursor: pointer; text-decoration: none; color: inherit; border-radius: var(--radius-sm); width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; transition: all var(--transition-speed) ease; }
-        .resource-actions a:hover, .resource-actions button:hover { background: rgba(255,255,255,0.2); }
-        .resource-actions .resource-redirect-btn { display: inline-flex; }
-        .resource-actions .resource-delete-btn { display: none; background: rgba(255, 69, 58, 0.2); }
-        .resource-actions .resource-delete-btn:hover { background: rgba(255, 69, 58, 0.4); }
-        #resourcesList.editing .resource-actions .resource-redirect-btn { display: none; }
-        #resourcesList.editing .resource-actions .resource-delete-btn { display: inline-flex; }
-
         /* Desktop-only styles */
         @media (min-width: 769px) {
             .subject-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
             #onboarding .subject-card, #settingsModal .subject-card { flex-direction: column; justify-content: center; text-align: center; gap: var(--space-3); }
-            .spec-header { flex-wrap: nowrap; }
+            .spec-header-main { flex-wrap: nowrap; }
             .spec-header h1 { font-size: var(--font-size-xxl); }
         }
 
@@ -338,54 +248,28 @@
             :root {
                 --space-1: 3px;  --space-2: 6px;  --space-3: 10px; --space-4: 14px;
                 --space-5: 18px; --space-6: 20px; --space-7: 28px; --space-8: 36px;
-
                 --font-size-xs: 11px; --font-size-sm: 13px; --font-size-md: 15px;
                 --font-size-lg: 18px; --font-size-xl: 22px; --font-size-xxl: 26px;
             }
 
             .container { padding: 0 var(--space-4); }
-
             .onboarding-card { padding: var(--space-7) var(--space-4); }
             .onboarding-card h1 { font-size: var(--font-size-xl); }
-
             .countdown-container { padding: var(--space-6) 0; }
             .countdown-timer { gap: var(--space-2); }
             .countdown-item { padding: var(--space-3); min-width: 65px; border-radius: var(--radius-md); }
             .countdown-item .value { font-size: var(--font-size-xl); }
             .countdown-item .label { font-size: 10px; margin-top: var(--space-1); }
 
-            .spec-header {
-                display: grid;
-                grid-template-areas:
-                    "back title"
-                    "controls controls";
-                grid-template-columns: auto 1fr;
-                align-items: center;
-                gap: var(--space-3);
-                padding: var(--space-3) var(--space-4);
-            }
-            .spec-header #backToDashBtn { grid-area: back; }
-            .spec-header h1 {
-                grid-area: title;
-                font-size: var(--font-size-lg);
-                text-align: center;
-                margin-right: 0;
-            }
-            .spec-header .filter-controls {
-                grid-area: controls;
-                margin-left: 0;
-                justify-self: center;
-            }
+            .spec-header { padding: var(--space-3) var(--space-4); flex-direction: column; align-items: stretch; gap: var(--space-3); }
+            .spec-header-main { justify-content: space-between; gap: var(--space-3); }
+            .spec-header h1 { font-size: var(--font-size-lg); margin: 0; }
+            .spec-summary-bar { justify-content: center; flex-wrap: wrap; margin-left: 0; }
             
             .paper-section { border-radius: var(--radius-lg); }
             .paper-header { padding: var(--space-4); font-size: var(--font-size-md); }
             .topic-header { padding: var(--space-3) var(--space-4); }
-            .subtopic { 
-                flex-direction: column; 
-                align-items: flex-start; 
-                gap: var(--space-3); 
-                padding: var(--space-4); 
-            }
+            .subtopic { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
             .subtopic-details { width: 100%; justify-content: space-between; }
             .subtopic-title { padding-right: 0; }
 
@@ -394,7 +278,6 @@
             .modal-header, .modal-footer { padding: var(--space-4); }
             .modal-body { padding: var(--space-5); }
         }
-
     </style>
 </head>
 <body>
@@ -430,15 +313,12 @@
     <div id="spec-view" class="spec-view hidden">
         <div class="container">
             <div class="spec-header">
-                <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
-                    <span class="material-icons">arrow_back</span>
-                </button>
-                <h1 id="specSubjectTitle"></h1>
-                <div class="filter-controls">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn red" data-filter="red" title="Filter by Red">R</button>
-                    <button class="filter-btn amber" data-filter="amber" title="Filter by Amber">A</button>
-                    <button class="filter-btn green" data-filter="green" title="Filter by Green">G</button>
+                <div class="spec-header-main">
+                    <button class="md-button text" id="backToDashBtn" title="Back to Dashboard">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <h1 id="specSubjectTitle"></h1>
+                    <div class="spec-summary-bar" id="specSummaryBar"></div>
                 </div>
             </div>
             <div id="specContent"></div>
@@ -458,35 +338,6 @@
         </div>
     </div>
 
-    <div id="resourcesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="resourcesModalTitle">Resources</h2></div>
-            <div class="modal-body" id="resourcesList"></div>
-            <div class="modal-footer">
-                <button class="md-button text" id="editResourcesBtn"><span class="material-icons">edit</span>Edit</button>
-                <button class="md-button" id="addNewResourceBtn"><span class="material-icons">add</span>New</button>
-                <button class="md-button text" id="closeResourcesModal" style="margin-left: auto;">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="editResourceModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="editResourceModalTitle">Add Resource</h2></div>
-            <div class="modal-body">
-                <div class="form-group"><label for="resourceTitleInput">Title</label><input type="text" id="resourceTitleInput" class="form-input" placeholder="e.g., My Notes, YouTube Video"></div>
-                <div class="form-group"><label for="resourceLinkInput">URL</label><input type="text" id="resourceLinkInput" class="form-input" placeholder="e.g., https://www.youtube.com/watch?v=..."></div>
-                <div class="form-group"><label>Color Tag</label><div class="color-picker" id="resourceColorPicker"></div></div>
-                <div class="form-error-message" id="resourceFormError"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="md-button text destructive" id="deleteResourceBtn">Delete</button>
-                <button class="md-button text" id="cancelEditResource">Cancel</button>
-                <button class="md-button" id="saveResourceBtn">Save</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // Data containing all subject specifications
         const subjectsData = {
@@ -497,20 +348,17 @@
             'Chemistry':{specifications:{'AQA':{'Paper 1':{'1. Atomic structure and the periodic table':['Atoms, elements and compounds','The periodic table','Properties of transition metals'],'2. Bonding, structure, and the properties of matter':['Chemical bonds','Properties of different structures','Structure and bonding of carbon'],'3. Quantitative chemistry':['Chemical measurements','Use of amount of substance in equations','Yield and atom economy'],'4. Chemical changes':['Reactivity of metals','Reactions of acids','Electrolysis'],'5. Energy changes':['Exothermic and endothermic reactions','Chemical cells and fuel cells']},'Paper 2':{'6. The rate and extent of chemical change':['Rate of reaction','Reversible reactions and dynamic equilibrium'],'7. Organic chemistry':['Carbon compounds as fuels and feedstock','Reactions of alkenes and alcohols','Synthetic and naturally occurring polymers'],'8. Chemical analysis':['Purity, formulations and chromatography','Identification of common gases and ions'],'9. Chemistry of the atmosphere':['The composition and evolution of the Earth’s atmosphere','Common atmospheric pollutants and their sources'],'10. Using resources':['Using the Earth’s resources and sustainable development','Potable water','Life cycle assessment and recycling']}}}},
             'Physics':{specifications:{'AQA':{'Paper 1':{'1. Energy':['Energy changes in a system','Conservation and dissipation of energy','National and global energy resources'],'2. Electricity':['Current, potential difference and resistance','Series and parallel circuits','Domestic uses and safety','Static electricity'],'3. Particle model of matter':['Changes of state and the particle model','Internal energy and energy transfers','Particle model and pressure'],'4. Atomic structure':['Atoms and isotopes','Atoms and nuclear radiation','Nuclear fission and fusion']},'Paper 2':{'5. Forces':['Forces and their interactions','Work done and energy transfer','Forces and elasticity','Pressure and pressure differences in fluids','Moments, levers and gears'],'6. Waves':['Wave properties','Electromagnetic waves','Black body radiation'],'7. Magnetism and electromagnetism':['Permanent and induced magnetism','The motor effect','Induced potential, transformers and the National Grid'],'8. Space physics':['Solar system; stability of orbital motions; satellites','Red-shift and the Big Bang theory']}}}},
             'Geography':{specifications:{'AQA':{'Paper 1: Living with the physical environment':{'1. The challenge of natural hazards':['Natural hazards','Tectonic hazards','Weather hazards','Climate change'],'2. The living world':['Ecosystems','Tropical rainforests','Hot deserts','Cold environments'],'3. Physical landscapes in the UK':['UK physical landscapes','Coastal landscapes in the UK','River landscapes in the UK','Glacial landscapes in the UK']},'Paper 2: Challenges in the human environment':{'4. Urban issues and challenges':['The urban world','Urban change in the UK','Urban sustainability'],'5. The changing economic world':['The development gap','Newly emerging economies (NEEs)','The changing UK economy'],'6. The challenge of resource management':['Resource management','Food management','Water management','Energy management']}}}},
-            'Computer Science':{specifications:{'OCR':{'Component 01: Computer systems':{'1.1 Systems Architecture':['The purpose of the CPU','Von Neumann architecture','Common CPU components and their function','The fetch-execute cycle'],'1.2 Memory & Storage':['The difference between RAM and ROM','The purpose of virtual memory','Flash memory','Types of storage: optical, magnetic, solid state'],'1.3 Computer Networks, Connections & Protocols':['Types of networks: LAN and WAN','Factors that affect network performance','The Internet and the DNS','Network topologies, hardware and protocols'],'1.4 Network Security':['Threats to computer systems and networks','Identifying and preventing vulnerabilities'],'1.5 System Software':['Operating systems functions','User interface types','Memory management and multitasking','Utility system software'],'1.6 Ethical, Legal, Cultural & Environmental Impacts':['Impacts of digital technology on society','Legislation (e.g., Data Protection Act, Computer Misuse Act)','Open source vs proprietary software']},'Component 02: Computational thinking, algorithms and programming':{'2.1 Algorithms':['Computational thinking','Standard searching and sorting algorithms','Producing algorithms using pseudocode and flowcharts'],'2.2 Programming Fundamentals':['Variables, constants, operators, inputs, outputs, assignment','Programming constructs (sequence, selection, iteration)','String manipulation','Data types and arrays','Subroutines (functions and procedures)'],'2.3 Producing Robust Programs':['Defensive design','Maintainability','Testing','Syntax and logic errors'],'2.4 Boolean Logic':['Simple logic diagrams (AND, OR, NOT)','Truth tables','Combining Boolean operators'],'2.5 Programming Languages & IDEs':['High-level and low-level languages','Translators (compilers and interpreters)','Integrated Development Environment (IDE) tools']}}}}
+            'Computer Science':{specifications:{'OCR':{'Component 01: Computer systems':{'1.1 Systems Architecture':['The purpose of the CPU','Von Neumann architecture','Common CPU components and their function','The fetch-execute cycle'],'1.2 Memory & Storage':['The difference between RAM and ROM','The purpose of virtual memory','Flash memory','Types of storage: optical, magnetic, solid state'],'1.3 Computer Networks, Connections & Protocols':['Types of networks: LAN and WAN','Factors that affect network performance','The Internet and the DNS','Network topologies, hardware and protocols'],'1.4 Network Security':['Threats to computer systems and networks','Identifying and preventing vulnerabilities'],'1.s System Software':['Operating systems functions','User interface types','Memory management and multitasking','Utility system software'],'1.6 Ethical, Legal, Cultural & Environmental Impacts':['Impacts of digital technology on society','Legislation (e.g., Data Protection Act, Computer Misuse Act)','Open source vs proprietary software']},'Component 02: Computational thinking, algorithms and programming':{'2.1 Algorithms':['Computational thinking','Standard searching and sorting algorithms','Producing algorithms using pseudocode and flowcharts'],'2.2 Programming Fundamentals':['Variables, constants, operators, inputs, outputs, assignment','Programming constructs (sequence, selection, iteration)','String manipulation','Data types and arrays','Subroutines (functions and procedures)'],'2.3 Producing Robust Programs':['Defensive design','Maintainability','Testing','Syntax and logic errors'],'2.4 Boolean Logic':['Simple logic diagrams (AND, OR, NOT)','Truth tables','Combining Boolean operators'],'2.5 Programming Languages & IDEs':['High-level and low-level languages','Translators (compilers and interpreters)','Integrated Development Environment (IDE) tools']}}}}
         };
 
         // Application State
         let selectedSubjects = [];
-        let paperResources = {};
         let ragStatus = {};
         let currentRagFilter = 'all';
         let countdownInterval;
-        let currentContext = { subject: null, paper: null, resourceIndex: null };
-        let isResourceEditing = false;
+        let currentContext = { subject: null };
         const views = {};
         const modals = {};
-        let audioCtx;
         let lastFocusedElement;
 
         // --- Core Application Logic ---
@@ -522,7 +370,6 @@
                 const data = JSON.parse(localStorage.getItem('studyTrackerDataV2'));
                 if(data) { 
                     selectedSubjects = data.selectedSubjects || []; 
-                    paperResources = data.paperResources || {}; 
                     ragStatus = data.ragStatus || {};
                 }
             } catch (e) { console.error("Could not parse data, starting fresh.", e); }
@@ -532,16 +379,14 @@
             addEventListeners();
         });
 
-        function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, paperResources, ragStatus })); }
+        function saveData() { localStorage.setItem('studyTrackerDataV2', JSON.stringify({ selectedSubjects, ragStatus })); }
 
         function addEventListeners() {
             document.body.addEventListener('click', e => {
                 const target = e.target;
                 const closest = (selector) => target.closest(selector);
                 
-                if (target.classList.contains('modal')) {
-                    hideModal(target.id);
-                }
+                if (target.classList.contains('modal')) { hideModal(target.id); }
 
                 const button = closest('button');
                 if (button) {
@@ -549,13 +394,8 @@
                     if (id === 'continueBtn') { if (selectedSubjects.length > 0) { saveData(); showView('dashboard'); } }
                     else if (id === 'editSubjectsBtn') { renderSettingsModal(); showModal('settingsModal'); }
                     else if (id === 'backToDashBtn') showView('dashboard');
-                    else if (closest('.paper-resources-btn')) showResourcesModal(closest('.paper-resources-btn').dataset.subject, closest('.paper-resources-btn').dataset.paper);
-                    else if (id === 'addNewResourceBtn') showEditResourceModal();
-                    else if (id === 'editResourcesBtn') toggleResourceEditMode();
-                    else if (closest('.resource-delete-btn')) handleDeleteResource(closest('.resource-delete-btn').dataset.index);
-                    else if (id === 'saveResourceBtn') handleSaveResource();
                     
-                    if (id === 'cancelSettings' || id === 'closeResourcesModal' || id === 'cancelEditResource') hideModal(closest('.modal').id);
+                    if (id === 'cancelSettings') hideModal(closest('.modal').id);
                     if (id === 'saveSettings') handleSaveSettings();
                 }
                 
@@ -566,53 +406,46 @@
                     if(document.getElementById('settingsModal').contains(subjectCard)) toggleSettingsSubject(subjectCard);
                 }
 
-                const resourceItem = closest('.resource-item');
-                if (resourceItem && isResourceEditing) { if (!target.closest('.resource-delete-btn')) { showEditResourceModal(resourceItem.dataset.index); } }
-
-                const colorDot = closest('.color-dot');
-                if (colorDot && closest('#editResourceModal')) { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); colorDot.classList.add('selected'); }
-
                 const ragDot = closest('.rag-dot');
                 if (ragDot) { handleRagSelection(ragDot); }
 
-                const filterBtn = closest('.filter-btn');
-                if (filterBtn) {
-                    currentRagFilter = filterBtn.dataset.filter;
-                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                    filterBtn.classList.add('active');
+                const filterTrigger = closest('.summary-item');
+                if (filterTrigger) {
+                    currentRagFilter = filterTrigger.dataset.filter;
+                    document.querySelectorAll('.summary-item').forEach(btn => btn.classList.remove('active'));
+                    filterTrigger.classList.add('active');
                     applyRagFilter();
                 }
             });
             
-            document.body.addEventListener('input', e => { if (e.target.id === 'customColorPicker') { document.querySelectorAll('#resourceColorPicker .selected').forEach(d => d.classList.remove('selected')); e.target.classList.add('selected'); } });
-            
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     const visibleModal = document.querySelector('.modal.visible');
-                    if (visibleModal) {
-                        hideModal(visibleModal.id);
-                    }
+                    if (visibleModal) { hideModal(visibleModal.id); }
                 }
             });
         }
 
-        function handleRagSelection(dotElement) {
-            const selector = dotElement.parentElement;
-            const subtopicKey = selector.dataset.subtopicKey;
-            const newStatus = dotElement.dataset.status;
+        function handleRagSelection(element) {
+            const subtopicKey = element.closest('.rag-selector').dataset.subtopicKey;
+            const newStatus = element.dataset.status;
 
-            if (dotElement.classList.contains('selected')) {
+            if (element.classList.contains('selected')) {
                 delete ragStatus[subtopicKey];
             } else {
                 ragStatus[subtopicKey] = { status: newStatus, timestamp: new Date().toISOString() };
             }
             saveData();
 
-            const subtopicEl = dotElement.closest('.subtopic');
-            const newSubtopicEl = createSubtopicElement( subtopicEl.dataset.subject, subtopicEl.dataset.examBoard, subtopicEl.dataset.paper, subtopicEl.dataset.topic, subtopicEl.dataset.subtopic );
-            subtopicEl.parentNode.replaceChild(newSubtopicEl, subtopicEl);
+            const subtopicEl = element.closest('.subtopic');
+            if (subtopicEl) {
+                const newSubtopicEl = createSubtopicElement( subtopicEl.dataset.subject, subtopicEl.dataset.examBoard, subtopicEl.dataset.paper, subtopicEl.dataset.topic, subtopicEl.dataset.subtopic );
+                subtopicEl.parentNode.replaceChild(newSubtopicEl, subtopicEl);
+            }
             
             updatePaperCompletionPercentages();
+            updateAllTopicProgress();
+            renderSummaryBar();
             applyRagFilter();
         }
 
@@ -666,50 +499,30 @@
         function showModal(modalId) { 
             const modal = modals[modalId];
             if(!modal) return;
-
             lastFocusedElement = document.activeElement;
             modal.classList.add('visible');
             modal.addEventListener('keydown', handleFocusTrap);
-
             const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (focusableElements.length > 0) {
-                setTimeout(() => focusableElements[0].focus(), 100);
-            }
+            if (focusableElements.length > 0) { setTimeout(() => focusableElements[0].focus(), 100); }
         }
         
         function hideModal(modalId) { 
             const modal = modals[modalId];
             if(!modal) return;
-            
             modal.classList.remove('visible');
             modal.removeEventListener('keydown', handleFocusTrap);
-
-            if(lastFocusedElement) {
-                lastFocusedElement.focus();
-            }
+            if(lastFocusedElement) { lastFocusedElement.focus(); }
         }
 
         function handleFocusTrap(e) {
             if (e.key !== 'Tab') return;
-            
             const modal = e.currentTarget;
             const focusableElements = Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.disabled && el.offsetParent !== null);
             if(focusableElements.length === 0) return;
-
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
-
-            if (e.shiftKey) {
-                if (document.activeElement === firstElement) {
-                    lastElement.focus();
-                    e.preventDefault();
-                }
-            } else {
-                if (document.activeElement === lastElement) {
-                    firstElement.focus();
-                    e.preventDefault();
-                }
-            }
+            if (e.shiftKey) { if (document.activeElement === firstElement) { lastElement.focus(); e.preventDefault(); } } 
+            else { if (document.activeElement === lastElement) { firstElement.focus(); e.preventDefault(); } }
         }
         
         function showSpecView(subject) { 
@@ -719,8 +532,6 @@
             document.getElementById('specSubjectTitle').innerHTML = `<span>${subject}</span><span class="exam-board-pill">${examBoard}</span>`; 
             
             currentRagFilter = 'all';
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === 'all'));
-
             renderSpecContent(subject); 
             showView('spec'); 
         }
@@ -744,24 +555,24 @@
                 Object.keys(specification[paper]).forEach(topic => { 
                     const topicEl = document.createElement('div'); 
                     topicEl.className = 'topic'; 
-                    topicEl.innerHTML = `<div class="topic-header">${topic}</div>`; 
+                    topicEl.dataset.topicName = topic;
+                    topicEl.innerHTML = `<div class="topic-header"><div class="topic-header-content">${topic}</div><div class="topic-progress-bar"><div class="topic-progress-fill"></div></div></div>`; 
                     specification[paper][topic].forEach(subtopic => topicEl.appendChild(createSubtopicElement(subject, examBoard, paper, topic, subtopic))); 
                     paperEl.appendChild(topicEl); 
                 }); 
                 contentEl.appendChild(paperEl); 
             }); 
             updatePaperCompletionPercentages();
+            updateAllTopicProgress();
+            renderSummaryBar();
             applyRagFilter();
         }
         
         function createSubtopicElement(subject, examBoard, paper, topic, subtopic) { 
             const subtopicEl = document.createElement('div'); 
             subtopicEl.className = 'subtopic'; 
-            subtopicEl.dataset.subject = subject;
-            subtopicEl.dataset.examBoard = examBoard;
-            subtopicEl.dataset.paper = paper;
-            subtopicEl.dataset.topic = topic;
-            subtopicEl.dataset.subtopic = subtopic;
+            subtopicEl.dataset.subject = subject; subtopicEl.dataset.examBoard = examBoard;
+            subtopicEl.dataset.paper = paper; subtopicEl.dataset.topic = topic; subtopicEl.dataset.subtopic = subtopic;
 
             const subtopicKey = `${subject}-${paper}-${topic}-${subtopic}`.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
             const ragEntry = ragStatus[subtopicKey];
@@ -769,24 +580,23 @@
             const timestamp = ragEntry ? ragEntry.timestamp : null;
 
             const formattedDate = timestamp 
-                ? new Date(timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '')
-                : '';
+                ? `Last reviewed: ${new Date(timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '')}`
+                : 'Not reviewed yet';
 
             subtopicEl.innerHTML = `
                 <div class="subtopic-title">${subtopic}</div>
                 <div class="subtopic-details">
-                    <div class="subtopic-review-info">${formattedDate}</div>
+                    <div class="review-timestamp-tooltip">${formattedDate}</div>
                     <div class="rag-selector" data-subtopic-key="${subtopicKey}">
                         <div class="rag-dot red ${currentStatus === 'red' ? 'selected' : ''}" data-status="red" title="Not Confident"><span class="material-icons check-icon">check</span></div>
-                        <div class="rag-dot amber ${currentStatus === 'amber' ? 'selected' : ''}" data-status="amber" title="Partially Confident"><span class="material-icons check-icon">check</span></div>
-                        <div class="rag-dot green ${currentStatus === 'green' ? 'selected' : ''}" data-status="green" title="Fully Confident"><span class="material-icons check-icon">check</span></div>
+                        <div class="rag-dot amber ${currentStatus === 'amber' ? 'selected' : ''}" data-status="amber" title="Needs Review"><span class="material-icons check-icon">check</span></div>
+                        <div class="rag-dot green ${currentStatus === 'green' ? 'selected' : ''}" data-status="green" title="Confident"><span class="material-icons check-icon">check</span></div>
                     </div>
                 </div>`;
             return subtopicEl; 
         }
 
         function createPaperHeaderElement(subject, paper) { 
-            const hasRes = (paperResources[`${subject}-${paper}`] || []).length > 0; 
             const paperEl = document.createElement('div'); 
             paperEl.className = 'paper-header'; 
             paperEl.dataset.paperKey = `${subject}-${paper}`; 
@@ -794,89 +604,64 @@
                 <div class="paper-header-title">
                     <span>${paper}</span>
                     <span class="paper-completion-pill">0% Reviewed</span>
-                </div>
-                <button class="paper-resources-btn ${hasRes ? 'has-resources' : ''}" data-subject="${subject}" data-paper="${paper}" title="View Resources">
-                    <span class="material-icons">menu_book</span>
-                </button>`; 
+                </div>`; 
             return paperEl; 
         }
 
+        function updateAllTopicProgress() {
+            document.querySelectorAll('.topic').forEach(topicEl => {
+                const subtopics = topicEl.querySelectorAll('.subtopic');
+                const totalSubtopics = subtopics.length;
+                if (totalSubtopics === 0) return;
+
+                let greenCount = 0;
+                subtopics.forEach(st => {
+                    const key = st.querySelector('.rag-selector').dataset.subtopicKey;
+                    if (ragStatus[key]?.status === 'green') {
+                        greenCount++;
+                    }
+                });
+                
+                const percentage = totalSubtopics > 0 ? (greenCount / totalSubtopics) * 100 : 0;
+                const fillEl = topicEl.querySelector('.topic-progress-fill');
+                if (fillEl) fillEl.style.width = `${percentage}%`;
+            });
+        }
+
+        function renderSummaryBar() {
+            const summaryBar = document.getElementById('specSummaryBar');
+            if (!summaryBar) return;
+            const counts = { red: 0, amber: 0, green: 0 };
+            const allSubtopicKeys = Array.from(document.querySelectorAll('.rag-selector')).map(el => el.dataset.subtopicKey);
+            
+            allSubtopicKeys.forEach(key => {
+                const status = ragStatus[key]?.status;
+                if (status && counts.hasOwnProperty(status)) {
+                    counts[status]++;
+                }
+            });
+
+            summaryBar.innerHTML = `
+                <div class="summary-item active" data-filter="all" title="Show All Topics"><span>All</span></div>
+                <div class="summary-item" data-filter="red" title="Filter 'Not Confident'"><span class="dot red"></span><span>${counts.red}</span></div>
+                <div class="summary-item" data-filter="amber" title="Filter 'Needs Review'"><span class="dot amber"></span><span>${counts.amber}</span></div>
+                <div class="summary-item" data-filter="green" title="Filter 'Confident'"><span class="dot green"></span><span>${counts.green}</span></div>
+            `;
+        }
+        
         function toggleOnboardingSubject(card) { const subject = card.dataset.subject; const isSelected = card.classList.toggle('selected'); if (isSelected) { if (!selectedSubjects.includes(subject)) selectedSubjects.push(subject); } else { selectedSubjects = selectedSubjects.filter(s => s !== subject); } updateContinueButton(); }
         function toggleSettingsSubject(card) { card.classList.toggle('selected'); updateSaveButtonState(); }
         function updateContinueButton() { const btn = document.getElementById('continueBtn'); if (!btn) return; btn.disabled = selectedSubjects.length === 0; const text = btn.querySelector('span:first-child'); text.textContent = selectedSubjects.length > 0 ? `Continue with ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}` : 'Continue'; }
         function handleSaveSettings() { selectedSubjects = Array.from(document.querySelectorAll('#settingsSubjectGrid .subject-card.selected')).map(card => card.dataset.subject); saveData(); hideModal('settingsModal'); if (selectedSubjects.length > 0) { showView('dashboard'); } else { showView('onboarding'); } }
         function updateSaveButtonState() { const saveBtn = document.getElementById('saveSettings'); if (saveBtn) saveBtn.disabled = document.querySelectorAll('#settingsSubjectGrid .subject-card.selected').length === 0; }
-        
-        function showResourcesModal(subject, paper) { Object.assign(currentContext, { subject, paper }); isResourceEditing = false; renderResourcesModal(); showModal('resourcesModal'); }
-        function toggleResourceEditMode() { isResourceEditing = !isResourceEditing; renderResourcesModal(); }
-        function showEditResourceModal(index = null) { currentContext.resourceIndex = index === null ? null : Number(index); renderEditResourceModal(); showModal('editResourceModal'); }
-        
-        function handleSaveResource() { 
-            const errorEl = document.getElementById('resourceFormError');
-            const title = document.getElementById('resourceTitleInput').value.trim(); 
-            let url = document.getElementById('resourceLinkInput').value.trim(); 
-            const selectedColorEl = document.querySelector('#resourceColorPicker .selected'); 
-            
-            if (!title || !url) { 
-                errorEl.textContent = 'Please provide both a title and a URL.';
-                errorEl.style.display = 'block';
-                return; 
-            } 
-            if (!selectedColorEl) {
-                errorEl.textContent = 'Please select a color tag for the resource.';
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            errorEl.style.display = 'none';
-            const color = selectedColorEl.dataset.color || selectedColorEl.value; 
-            if (!/^(https?:\/\/)/i.test(url)) { url = 'https://' + url; } 
-            
-            const { subject, paper, resourceIndex } = currentContext; 
-            const paperKey = `${subject}-${paper}`; 
-            if (!paperResources[paperKey]) paperResources[paperKey] = []; 
-            const newResource = { title, url, color }; 
-            
-            if (resourceIndex !== null) { 
-                paperResources[paperKey][resourceIndex] = newResource; 
-            } else { 
-                paperResources[paperKey].push(newResource); 
-            } 
-            
-            saveData(); 
-            rerenderPaperHeader(subject, paper); 
-            renderResourcesModal(); 
-            hideModal('editResourceModal'); 
-        }
-
-        function handleDeleteResource(index) { if (confirm('Are you sure you want to delete this resource?')) { const { subject, paper } = currentContext; paperResources[`${subject}-${paper}`].splice(index, 1); saveData(); rerenderPaperHeader(subject, paper); renderResourcesModal(); } }
-        
+                
         function startCountdown() { const el=document.getElementById('countdownTimer');const d=new Date('2026-05-14T09:00:00');function t(){const o=d-new Date;if(o<=0){el.innerHTML="<h2>Exams Started!</h2>";stopCountdown();return}const e=Math.floor(o/864e5),n=Math.floor(o%864e5/36e5),a=Math.floor(o%36e5/6e4),i=Math.floor(o%6e4/1e3);el.innerHTML=`<div class="countdown-item"><span class="value">${e}</span><span class="label">Days</span></div><div class="countdown-item"><span class="value">${n}</span><span class="label">Hours</span></div><div class="countdown-item"><span class="value">${a}</span><span class="label">Minutes</span></div><div class="countdown-item"><span class="value">${i}</span><span class="label">Seconds</span></div>`}stopCountdown();t();countdownInterval=setInterval(t,1e3)}
         function stopCountdown() { clearInterval(countdownInterval); }
-        function rerenderPaperHeader(subject, paper) { const el = document.querySelector(`.paper-header[data-paper-key="${subject}-${paper}"]`); if(el) { const newHeader = createPaperHeaderElement(subject, paper); el.parentNode.replaceChild(newHeader, el); updatePaperCompletionPercentages(); } }
-        function getContrastYIQ(hexcolor){ hexcolor = hexcolor.replace("#", ""); const r = parseInt(hexcolor.substr(0,2),16), g = parseInt(hexcolor.substr(2,2),16), b = parseInt(hexcolor.substr(4,2),16); const yiq = ((r*299)+(g*587)+(b*114))/1000; return (yiq >= 128) ? 'dark' : 'light'; }
         
         function renderOnboardingContent() { const grid = document.getElementById('onboardingSubjectGrid'); if (!grid) return; grid.innerHTML = ''; Object.keys(subjectsData).forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; if (selectedSubjects.includes(subject)) card.classList.add('selected'); card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); updateContinueButton(); }
         function renderDashboardContent() { const grid = document.getElementById('dashboardSubjectGrid'); if (!grid) return; grid.innerHTML = ''; selectedSubjects.forEach((subject, index) => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const card = document.createElement('div'); card.className = 'subject-card'; card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; card.style.animationDelay = `${index * 50}ms`; grid.appendChild(card); }); }
         function renderSettingsModal() { const grid = document.getElementById('settingsSubjectGrid'); grid.innerHTML = ''; Object.keys(subjectsData).forEach(subject => { const subjectInfo = subjectsData[subject]; const examBoard = Object.keys(subjectInfo.specifications)[0]; const isSelected = selectedSubjects.includes(subject); const card = document.createElement('div'); card.className = 'subject-card'; if (isSelected) card.classList.add('selected'); card.dataset.subject = subject; card.innerHTML = `<h3>${subject}</h3><span class="exam-board-pill">${examBoard}</span>`; grid.appendChild(card); }); updateSaveButtonState(); }
-        function renderResourcesModal() { const { subject, paper } = currentContext; const paperKey = `${subject}-${paper}`; const resources = paperResources[paperKey] || []; const listEl = document.getElementById('resourcesList'); const editBtn = document.getElementById('editResourcesBtn'); const addBtn = document.getElementById('addNewResourceBtn'); document.getElementById('resourcesModalTitle').textContent = `Resources for ${paper}`; if (isResourceEditing) { editBtn.innerHTML = `<span class="material-icons">done</span>Done`; addBtn.style.display = 'none'; listEl.classList.add('editing'); } else { editBtn.innerHTML = `<span class="material-icons">edit</span>Edit`; addBtn.style.display = 'inline-flex'; listEl.classList.remove('editing'); } editBtn.disabled = resources.length === 0; let resourcesHTML = resources.length ? resources.map((res, i) => { const textClass = `text-${getContrastYIQ(res.color)}`; const safeUrl = /^(https?:\/\/)/i.test(res.url) ? res.url : 'https://' + res.url; return ` <div class="resource-item ${textClass}" data-index="${i}" style="background-color:${res.color};"> <span class="resource-title">${res.title}</span> <div class="resource-actions"> <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="resource-redirect-btn" title="Open Link"> <span class="material-icons">launch</span> </a> <button class="resource-delete-btn" data-index="${i}" title="Delete Resource"> <span class="material-icons">delete</span> </button> </div> </div>`.trim() }).join('') : '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-7) 0;">No resources added yet.</p>'; if (isResourceEditing && resources.length > 0) { resourcesHTML = `<p class="edit-mode-notice">✨ <b>Editing Mode</b> — Tap a resource to modify.</p>` + resourcesHTML; } listEl.innerHTML = resourcesHTML; }
-        function renderEditResourceModal() {
-            const { subject, paper, resourceIndex } = currentContext;
-            const paperKey = `${subject}-${paper}`;
-            const resource = resourceIndex !== null ? (paperResources[paperKey] || [])[resourceIndex] : null;
-            document.getElementById('editResourceModalTitle').textContent = resource ? 'Edit Resource' : 'Add New Resource';
-            document.getElementById('resourceTitleInput').value = resource ? resource.title : '';
-            document.getElementById('resourceLinkInput').value = resource ? resource.url : '';
-            document.getElementById('deleteResourceBtn').style.display = resource ? 'inline-flex' : 'none';
-            document.getElementById('resourceFormError').style.display = 'none';
-            // UPDATED: Consistent colors with new RAG palette
-            const defaultColors = ['#EF4444', '#D97706', '#059669', '#3B82F6', '#6366F1', '#8B5CF6'];
-            const colorPicker = document.getElementById('resourceColorPicker');
-            let resourceColor = resource ? resource.color : '#6366F1'; // Default to indigo
-            let isDefaultColor = defaultColors.includes(resourceColor);
-            colorPicker.innerHTML = ` ${defaultColors.map(c => `<div class="color-dot ${resourceColor === c ? 'selected' : ''}" data-color="${c}" style="background-color:${c};"></div>`).join('')} <input type="color" id="customColorPicker" class="${!isDefaultColor ? 'selected' : ''}" value="${isDefaultColor ? '#6366F1' : resourceColor}" title="Custom Color"> `;
-        }
-        
+
     </script>
 </body>
 </html>
